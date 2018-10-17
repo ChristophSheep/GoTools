@@ -13,6 +13,9 @@ Examples:
 https://kylewbanks.com/blog/tutorial-opengl-with-golang-part-1-hello-opengl
 https://github.com/sappharx/go-life/blob/master/main.go
 
+https://github.com/raedatoui/learn-opengl-golang/blob/master/tutorial.go
+https://github.com/raedatoui/learn-opengl-golang
+
 Installation:
 
 First get "glfw" with:
@@ -54,7 +57,14 @@ func initOpenGL() uint32 {
 
 func draw(window *glfw.Window, program uint32) {
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
-	gl.UseProgram(prog)
+	gl.UseProgram(program)
+
+	// Draw a line
+	gl.Color3ub(255, 0, 0)
+	gl.Begin(gl.LINES)
+	gl.Vertex2f(10, 10)
+	gl.Vertex2f(20, 20)
+	gl.End()
 
 	glfw.PollEvents()
 	window.SwapBuffers()
