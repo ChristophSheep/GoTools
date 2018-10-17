@@ -85,7 +85,7 @@ func dlScript(i, j int, tsBaseUrl string) {
 	}
 }
 
-func joinScript(i, j int) {
+func joinScriptWin(i, j int) {
 
 	fmt.Printf("Create jn.bat for i=%d, j=%d\n", i, j)
 
@@ -98,6 +98,26 @@ func joinScript(i, j int) {
 
 	fmt.Println(getJoinCmd(i, j))
 	fmt.Fprintln(file, getJoinCmd(i, j))
+}
+
+func joinScriptMac(i, j int) {
+	// e.g. cat datei1 datei2 > ausgabedatei
+	file, err := os.Create("jn.sh")
+	if err != nil {
+		log.Fatal("Cannot create file", err)
+	}
+	defer file.Close()
+
+	tss := createTss(i, j)
+
+	// Join strings into one
+	// e.g. copy /b 1.ts+2.ts all.ts
+	//
+	ts := strings.Join(tss, " ")
+
+	cmd := "cat " + ts + " > movie.ts"
+
+	fmt.Fprintln(file, cmd)
 }
 
 func removeScript(i, j int) {
@@ -144,6 +164,7 @@ func main() {
 	}
 
 	dlScript(i, j, tsBaseUrl)
-	joinScript(i, j)
+	joinScriptWin(i, j)
+	joinScriptMac(i, j)
 	removeScript(i, j)
 }
