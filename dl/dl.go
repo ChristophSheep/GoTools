@@ -154,7 +154,7 @@ func main() {
 	// -------- ------- ------- ----------------------------------------------------------- -----
 	// 200 		GET 	1.ts 	https://cs6.rbmbtnx.net/v1/STV/s/1/X3/QT/64/8H/5N/11/.1ts 	mp2t
 
-	tsBaseUrl := "https://cs6.rbmbtnx.net/v1/STV/s/1/X3/QT/64/8H/5N/11/"
+	tsBaseUrl := "https://cs6.rbmbtnx.net/v1/STV/s/1/X3/QT/64/8H/5N/11/" // Tulpen aus Ammerland #ts 1 937
 
 	i, err := strconv.Atoi(os.Args[1])
 	j, err := strconv.Atoi(os.Args[2])
