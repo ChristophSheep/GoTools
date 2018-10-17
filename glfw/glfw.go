@@ -24,6 +24,7 @@ On Windows first install https://mingw-w64.org/
 and choose "x86_64" during installation
 
 > go get -u github.com/go-gl/glfw/v3.2/glfw
+> go get -u github.com/go-gl/gl/v2.1/gl
 
 */
 
@@ -55,38 +56,128 @@ func initOpenGL() uint32 {
 	return prog
 }
 
-func draw(window *glfw.Window, program uint32) {
+func drawScene() {
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
-	gl.UseProgram(program)
+
+	gl.MatrixMode(gl.MODELVIEW)
+	gl.LoadIdentity()
+	gl.Translatef(0, 0, -3.0)
+	//gl.Rotatef(rotationX, 1, 0, 0)
+	//gl.Rotatef(rotationY, 0, 1, 0)
+
+	//rotationX += 0.5
+	//rotationY += 0.5
+
+	//gl.BindTexture(gl.TEXTURE_2D, texture)
+
+	gl.Color4f(1, 1, 1, 1)
+
+	gl.Begin(gl.QUADS)
+
+	gl.Normal3f(0, 0, 1)
+	gl.TexCoord2f(0, 0)
+	gl.Vertex3f(-1, -1, 1)
+	gl.TexCoord2f(1, 0)
+	gl.Vertex3f(1, -1, 1)
+	gl.TexCoord2f(1, 1)
+	gl.Vertex3f(1, 1, 1)
+	gl.TexCoord2f(0, 1)
+	gl.Vertex3f(-1, 1, 1)
+
+	gl.Normal3f(0, 0, -1)
+	gl.TexCoord2f(1, 0)
+	gl.Vertex3f(-1, -1, -1)
+	gl.TexCoord2f(1, 1)
+	gl.Vertex3f(-1, 1, -1)
+	gl.TexCoord2f(0, 1)
+	gl.Vertex3f(1, 1, -1)
+	gl.TexCoord2f(0, 0)
+	gl.Vertex3f(1, -1, -1)
+
+	gl.Normal3f(0, 1, 0)
+	gl.TexCoord2f(0, 1)
+	gl.Vertex3f(-1, 1, -1)
+	gl.TexCoord2f(0, 0)
+	gl.Vertex3f(-1, 1, 1)
+	gl.TexCoord2f(1, 0)
+	gl.Vertex3f(1, 1, 1)
+	gl.TexCoord2f(1, 1)
+	gl.Vertex3f(1, 1, -1)
+
+	gl.Normal3f(0, -1, 0)
+	gl.TexCoord2f(1, 1)
+	gl.Vertex3f(-1, -1, -1)
+	gl.TexCoord2f(0, 1)
+	gl.Vertex3f(1, -1, -1)
+	gl.TexCoord2f(0, 0)
+	gl.Vertex3f(1, -1, 1)
+	gl.TexCoord2f(1, 0)
+	gl.Vertex3f(-1, -1, 1)
+
+	gl.Normal3f(1, 0, 0)
+	gl.TexCoord2f(1, 0)
+	gl.Vertex3f(1, -1, -1)
+	gl.TexCoord2f(1, 1)
+	gl.Vertex3f(1, 1, -1)
+	gl.TexCoord2f(0, 1)
+	gl.Vertex3f(1, 1, 1)
+	gl.TexCoord2f(0, 0)
+	gl.Vertex3f(1, -1, 1)
+
+	gl.Normal3f(-1, 0, 0)
+	gl.TexCoord2f(0, 0)
+	gl.Vertex3f(-1, -1, -1)
+	gl.TexCoord2f(1, 0)
+	gl.Vertex3f(-1, -1, 1)
+	gl.TexCoord2f(1, 1)
+	gl.Vertex3f(-1, 1, 1)
+	gl.TexCoord2f(0, 1)
+	gl.Vertex3f(-1, 1, -1)
+
+	gl.End()
+}
+
+func draw() {
+	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+
+	gl.LineWidth(10)
 
 	// Draw a line
-	gl.Color3ub(255, 0, 0)
+	gl.Color3ub(255, 255, 0)
 	gl.Begin(gl.LINES)
-	gl.Vertex2f(10, 10)
-	gl.Vertex2f(20, 20)
+	gl.Vertex2f(-1, -1)
+	gl.Vertex2f(2, 2)
 	gl.End()
 
-	glfw.PollEvents()
-	window.SwapBuffers()
 }
 
 func main() {
+
 	err := glfw.Init()
 	if err != nil {
 		panic(err)
 	}
 	defer glfw.Terminate()
 
+	glfw.WindowHint(glfw.Samples, 4) // Before creating window set context AntiAliasing
+
 	window, err := glfw.CreateWindow(640, 480, "Testing", nil, nil)
 	if err != nil {
 		panic(err)
 	}
 
-	window.MakeContextCurrent()
+	window.MakeContextCurrent() // OK
 
-	program := initOpenGL()
+	if err := gl.Init(); err != nil { // OK
+		panic(err)
+	}
+
+	gl.Enable(gl.BLEND)
+	gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
 
 	for !window.ShouldClose() {
-		draw(window, program)
+		draw()
+		window.SwapBuffers()
+		glfw.PollEvents()
 	}
 }
