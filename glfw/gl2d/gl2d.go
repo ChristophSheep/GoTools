@@ -44,7 +44,7 @@ func NewLine(x1, y1, x2, y2 float32) Lines {
 	obj.Vertices = append(obj.Vertices, Vertex2{x1, y1})
 	obj.Vertices = append(obj.Vertices, Vertex2{x2, y2})
 	obj.LineWidth = 2.0
-	obj.Color = [3]uint8{255, 0, 0}
+	obj.Color = [3]uint8{255, 128, 0}
 	return obj
 }
 
@@ -72,8 +72,8 @@ func DrawScene(window *glfw.Window, objects []Object, angle *float32) {
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 	//gl.UseProgram(prog) // TODO
 
-	*angle = *angle + 5.0
-	gl.Rotatef(*angle, 0.0, 0.0, 1.0)
+	//*angle = *angle + 5.0
+	//gl.Rotatef(*angle, 0.0, 0.0, 1.0)
 
 	// Draw Objects
 	//
@@ -95,10 +95,10 @@ func main() {
 	const N = 4
 
 	points := [4 * N]float32{
-		+0, -0.5, -0, +0.5,
-		-0.5, +0, +0.5, -0,
-		-1, +1, +1, -1,
-		-1, -1, +1, +1}
+		+0.0, -0.5, -0.0, +0.5,
+		-0.5, +0.0, +0.5, -0.0,
+		-1.0, +1.0, +1.0, -1.0,
+		-1.0, -1.0, +1.0, +1.0}
 
 	var objects []Object
 
@@ -133,9 +133,6 @@ func main() {
 	// Main loop
 	//
 	for !window.ShouldClose() {
-
-		// Draw scene
-		//
 		DrawScene(window, objects, &angle)
 	}
 }
