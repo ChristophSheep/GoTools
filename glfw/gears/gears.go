@@ -398,7 +398,7 @@ func (l *Lines) Draw() {
 	for vertex := range l.vertices {
 		gl.Vertex2f(vertex.X, vertex.Y)	
 	}
-	gl.End()
+	gl.End(
 }
 
 // draw redraws the game board and the cells within.
