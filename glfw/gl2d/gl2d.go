@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/go-gl/gl/v2.1/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"
 )
@@ -41,17 +43,20 @@ func NewLine(x1, y1, x2, y2 float32) Lines {
 	obj := Lines{}
 	obj.Vertices = append(obj.Vertices, Vertex2{x1, y1})
 	obj.Vertices = append(obj.Vertices, Vertex2{x2, y2})
-	obj.LineWidth = 1.0
+	obj.LineWidth = 2.0
 	obj.Color = [3]uint8{255, 0, 0}
 	return obj
 }
 
 func (l *Lines) Draw() {
 	// Set line width
+	//
 	gl.LineWidth(l.LineWidth)
 	// Set Color
+	//
 	gl.Color3ub(l.Color[0], l.Color[1], l.Color[2])
 	// Set Vertices
+	//
 	gl.Begin(gl.LINES)
 	for _, v := range l.Vertices {
 		gl.Vertex2f(v.X, v.Y)
@@ -60,12 +65,15 @@ func (l *Lines) Draw() {
 }
 
 // draw redraws the game board and the cells within.
-func DrawScene(window *glfw.Window, objects []Object) {
+func DrawScene(window *glfw.Window, objects []Object, angle *float32) {
 
 	// Clear Screen
 	//
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 	//gl.UseProgram(prog) // TODO
+
+	*angle = *angle + 5.0
+	gl.Rotatef(*angle, 0.0, 0.0, 1.0)
 
 	// Draw Objects
 	//
@@ -83,9 +91,22 @@ func main() {
 
 	// Create Objects
 	//
+
+	const N = 4
+
+	points := [4 * N]float32{
+		+0, -0.5, -0, +0.5,
+		-0.5, +0, +0.5, -0,
+		-1, +1, +1, -1,
+		-1, -1, +1, +1}
+
 	var objects []Object
-	line := NewLine(-1, -1, 1, 1)
-	objects = append(objects, &line)
+
+	for i := 0; i < len(points); i = i + N {
+		fmt.Println(i)
+		line := NewLine(points[i+0], points[i+1], points[i+2], points[i+3])
+		objects = append(objects, &line)
+	}
 
 	// Init GLFW
 	err := glfw.Init()
@@ -95,7 +116,7 @@ func main() {
 	defer glfw.Terminate()
 
 	// Create Window
-	window, err := glfw.CreateWindow(640, 480, "Testing", nil, nil)
+	window, err := glfw.CreateWindow(400, 400, "Testing", nil, nil)
 	if err != nil {
 		panic(err)
 	}
@@ -107,12 +128,14 @@ func main() {
 		panic(err)
 	}
 
+	angle := float32(0.0)
+
 	// Main loop
 	//
 	for !window.ShouldClose() {
 
 		// Draw scene
 		//
-		DrawScene(window, objects)
+		DrawScene(window, objects, &angle)
 	}
 }
