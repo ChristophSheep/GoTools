@@ -163,7 +163,7 @@ func drawScene() {
 		y1 += step
 	}
 
-	drawCube()
+	//drawCube()
 }
 
 func main() {
@@ -189,11 +189,10 @@ func main() {
 		panic(err)
 	}
 
-	//gl.Enable(gl.BLEND)
-	//gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
-
 	for !window.ShouldClose() {
+
 		drawScene()
+
 		window.SwapBuffers()
 		glfw.PollEvents()
 	}
