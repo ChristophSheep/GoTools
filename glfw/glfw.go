@@ -61,8 +61,10 @@ func drawCube() {
 
 	gl.MatrixMode(gl.MODELVIEW)
 	gl.LoadIdentity()
-	gl.Translatef(0, 0, -3.0)
-	//gl.Rotatef(rotationX, 1, 0, 0)
+	gl.Scalef(0.1, 0.1, 0.1)
+	//gl.Translatef(0, 0, -3.0)
+
+	gl.Rotatef(30, 1, 1, 0)
 
 	//gl.Rotatef(rotationY, 0, 1, 0)
 
@@ -71,7 +73,9 @@ func drawCube() {
 
 	//gl.BindTexture(gl.TEXTURE_2D, texture)
 
-	gl.Color4f(1, 1, 1, 1)
+	gl.Color4f(1, 1, 1, 1) // white
+
+	gl.Color3ub(255, 255, 0) // yellow
 
 	gl.Begin(gl.QUADS)
 
@@ -163,7 +167,7 @@ func drawScene() {
 		y1 += step
 	}
 
-	//drawCube()
+	drawCube()
 }
 
 func main() {
@@ -177,14 +181,12 @@ func main() {
 	// Set Anti-Aliasing before window is created
 	//
 	glfw.WindowHint(glfw.Samples, 4)
-
 	window, err := glfw.CreateWindow(640, 480, "Testing", nil, nil)
 	if err != nil {
 		panic(err)
 	}
 
-	window.MakeContextCurrent() // OK
-
+	window.MakeContextCurrent()       // OK
 	if err := gl.Init(); err != nil { // OK
 		panic(err)
 	}
