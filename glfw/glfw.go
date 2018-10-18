@@ -56,13 +56,14 @@ func initOpenGL() uint32 {
 	return prog
 }
 
-func drawScene() {
-	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+func drawCube() {
+	//gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
 	gl.MatrixMode(gl.MODELVIEW)
 	gl.LoadIdentity()
 	gl.Translatef(0, 0, -3.0)
 	//gl.Rotatef(rotationX, 1, 0, 0)
+
 	//gl.Rotatef(rotationY, 0, 1, 0)
 
 	//rotationX += 0.5
@@ -137,18 +138,32 @@ func drawScene() {
 	gl.End()
 }
 
-func draw() {
-	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
-
-	gl.LineWidth(10)
-
-	// Draw a line
-	gl.Color3ub(255, 255, 0)
+func drawLine(x1, y1, x2, y2 float32) {
 	gl.Begin(gl.LINES)
-	gl.Vertex2f(-1, -1)
-	gl.Vertex2f(2, 2)
+	gl.Vertex2f(x1, y1)
+	gl.Vertex2f(x2, y2)
 	gl.End()
+}
 
+func clearScene() {
+	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+}
+
+func drawScene() {
+
+	clearScene()
+
+	gl.LineWidth(2)
+	gl.Color3ub(255, 255, 0)
+
+	y1 := float32(-1.0)
+	step := float32(0.25)
+	for y1 < 1 {
+		drawLine(-1, y1, 1, 1)
+		y1 += step
+	}
+
+	drawCube()
 }
 
 func main() {
@@ -159,7 +174,9 @@ func main() {
 	}
 	defer glfw.Terminate()
 
-	glfw.WindowHint(glfw.Samples, 4) // Before creating window set context AntiAliasing
+	// Set Anti-Aliasing before window is created
+	//
+	glfw.WindowHint(glfw.Samples, 4)
 
 	window, err := glfw.CreateWindow(640, 480, "Testing", nil, nil)
 	if err != nil {
@@ -172,11 +189,11 @@ func main() {
 		panic(err)
 	}
 
-	gl.Enable(gl.BLEND)
-	gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+	//gl.Enable(gl.BLEND)
+	//gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
 
 	for !window.ShouldClose() {
-		draw()
+		drawScene()
 		window.SwapBuffers()
 		glfw.PollEvents()
 	}
