@@ -60,7 +60,7 @@ func createLineStripes(vertices []float32) LineStripes {
 func createLineLoops(vertices []float32) LineLoops {
 	return LineLoops{
 		Color:    [3]uint8{128, 255, 128},
-		Width:    5.0,
+		Width:    2.0,
 		Vertices: vertices}
 }
 
@@ -71,14 +71,7 @@ func createPoints(vertices []float32) Points {
 		Vertices: vertices}
 }
 
-func main() {
-
-	// Examples data
-	//
-	// http://graphics.stanford.edu/data/3Dscanrep/
-
-	// Create Objects
-	//
+func createObjects() []Drawables {
 	var objects []Drawables
 
 	linesVerts := []float32{
@@ -107,8 +100,25 @@ func main() {
 	lineLoop := createLineLoops(loopVerts)
 	objects = append(objects, &lineLoop)
 
+	circle := createLineLoops(createCircle(0.0, 0.0, 0.75, 8))
+	circle.Color = [3]uint8{63, 31, 255}
+	objects = append(objects, &circle)
+
 	points := createPoints(linesVerts)
 	objects = append(objects, &points)
+
+	return objects
+}
+
+func main() {
+
+	// Examples data
+	//
+	// http://graphics.stanford.edu/data/3Dscanrep/
+
+	// Create Objects
+	//
+	objects := createObjects()
 
 	// Init GL, GLFW
 	//
