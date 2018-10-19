@@ -46,21 +46,21 @@ func initWindow(width, height int, title string) *glfw.Window {
 func createLines(vertices []float32) Lines {
 	return Lines{
 		Color:    [3]uint8{255, 128, 64},
-		Width:    1.0,
+		Width:    2.0,
 		Vertices: vertices}
 }
 
 func createLineStripes(vertices []float32) LineStripes {
 	return LineStripes{
 		Color:    [3]uint8{128, 64, 255},
-		Width:    1.0,
+		Width:    7.0,
 		Vertices: vertices}
 }
 
 func createLineLoops(vertices []float32) LineLoops {
 	return LineLoops{
 		Color:    [3]uint8{128, 255, 128},
-		Width:    1.0,
+		Width:    5.0,
 		Vertices: vertices}
 }
 
@@ -73,36 +73,41 @@ func createPoints(vertices []float32) Points {
 
 func main() {
 
+	// Examples data
+	//
+	// http://graphics.stanford.edu/data/3Dscanrep/
+
 	// Create Objects
 	//
 	var objects []Drawables
 
-	vertices := []float32{
+	linesVerts := []float32{
 		+0.0, -0.5, -0.0, +0.5,
 		-1.0, +1.0, +1.0, -1.0,
 		-0.5, +0.0, +0.5, -0.0,
 		-1.0, -1.0, +1.0, +1.0}
 
-	stripe := []float32{
+	stripeVerts := []float32{
 		+0.0, +0.5,
 		-0.5, +0.0,
-		-0.0, -0.5}
+		-0.0, -0.5,
+		+0.5, -0.0}
 
-	loop := []float32{
+	loopVerts := []float32{
 		+0.0, +0.5,
 		+0.0, +0.0,
 		+0.5, +0.0}
 
-	lines := createLines(vertices)
+	lines := createLines(linesVerts)
 	objects = append(objects, &lines)
 
-	lineStripe := createLineStripes(stripe)
+	lineStripe := createLineStripes(stripeVerts)
 	objects = append(objects, &lineStripe)
 
-	lineLoop := createLineLoops(loop)
+	lineLoop := createLineLoops(loopVerts)
 	objects = append(objects, &lineLoop)
 
-	points := createPoints(vertices)
+	points := createPoints(linesVerts)
 	objects = append(objects, &points)
 
 	// Init GL, GLFW

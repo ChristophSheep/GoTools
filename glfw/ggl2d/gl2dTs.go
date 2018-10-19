@@ -4,6 +4,13 @@ import (
 	"github.com/go-gl/gl/v2.1/gl"
 )
 
+//  TODOS
+//  =====
+//
+// 		- Drawing order
+// 		- Id
+// 		- Name
+
 // ----------------------------------------------------------------------------
 // Drawables
 //
@@ -25,7 +32,7 @@ type Points struct {
 func (ps *Points) Draw() {
 	gl.PointSize(ps.Size) // DIFFERENT
 	gl.Color3ub(ps.Color[0], ps.Color[1], ps.Color[2])
-	gl.Begin(gl.POINTS)
+	gl.Begin(gl.POINTS) // DIFFERENT
 	for i := 0; i < len(ps.Vertices); i = i + 2 {
 		x := ps.Vertices[i+0]
 		y := ps.Vertices[i+1]
@@ -47,7 +54,7 @@ type Lines struct {
 func (ls *Lines) Draw() {
 	gl.LineWidth(ls.Width) // DIFFERENT
 	gl.Color3ub(ls.Color[0], ls.Color[1], ls.Color[2])
-	gl.Begin(gl.LINES)
+	gl.Begin(gl.LINES) // DIFFERENT
 	for i := 0; i < len(ls.Vertices); i = i + 2 {
 		x := ls.Vertices[i+0]
 		y := ls.Vertices[i+1]
@@ -61,15 +68,20 @@ func (ls *Lines) Draw() {
 //
 
 type LineStripes struct {
-	Color    [3]uint8
-	Width    float32
+	Color [3]uint8
+
+	Width float32
+
 	Vertices []float32 // x y -- x y -- x y -- x y -- x y -- x y
 }
 
 func (ls *LineStripes) Draw() {
-	gl.LineWidth(ls.Width)
+
+	gl.LineWidth(ls.Width) // DIFFERENT
+
 	gl.Color3ub(ls.Color[0], ls.Color[1], ls.Color[2])
-	gl.Begin(gl.LINE_STRIP)
+
+	gl.Begin(gl.LINE_STRIP) // DIFFERENT
 	for i := 0; i < len(ls.Vertices); i = i + 2 {
 		x := ls.Vertices[i+0]
 		y := ls.Vertices[i+1]
@@ -83,14 +95,20 @@ func (ls *LineStripes) Draw() {
 //
 
 type LineLoops struct {
-	Color    [3]uint8
-	Width    float32
+	Color [3]uint8
+
+	Width float32
+
 	Vertices []float32 // x y -- x y -- x y -- x y -- x y -- x y --> START
+
 }
 
 func (ls *LineLoops) Draw() {
+
 	gl.LineWidth(ls.Width)
+
 	gl.Color3ub(ls.Color[0], ls.Color[1], ls.Color[2])
+
 	gl.Begin(gl.LINE_LOOP)
 	for i := 0; i < len(ls.Vertices); i = i + 2 {
 		x := ls.Vertices[i+0]
