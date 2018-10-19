@@ -19,25 +19,54 @@ import (
 //
 // see https://tour.golang.org/moretypes/2
 
+//
+//      ** S T O P **   ->  WRONG WAY
+//
+
+// Computer is fast.
+// Do not use object
+// Used lists of point (streams)
+// Hash table for fast access to Id or Name
+//
+// For example:
+//
+
+// https://www.khronos.org/opengl/wiki/Primitive#Point_primitives
+// https://programming.guide/go/read-file-line-by-line.html
+// https://stackoverflow.com/questions/14426366/what-is-an-idiomatic-way-of-representing-enums-in-go
+
+//  id 		 	uint64		= 0
+//  type		uint32		= 1 // lines
+//  name     	string		= "lines_1"
+//  lineWidth 	float32		= 1.0
+//  color 	 	[3]uint8	= 255 0 0 0  // rgba or argb
+//  vertices 	[]float32	= x y x y x y .... x y
+//
+
+//  id 		 	uint64		= 1
+//  type		uint32		= 2 // polyline -> line_strip -> line_loop (closed strip)
+//  name     	string		= "polyline2D_1"
+//  lineWidth 	float32		= 1.0
+//  color 	 	[3]uint8	= 255 0 0 0  // rgba or argb
+//  vertices 	[]float32	= x y x y x y .... x y
+//
+
+// See how AutoCAD Works
+// A long list of objects
+
 // Interfaces are named collections of method signatures.
 //
 type Object interface {
-	//Type() string
-	// Color() [3]int
 	Draw()
 }
 
-type Vertex2 struct {
-	X float32
-	Y float32
+// Implement interface
+//
+func (pl *PolyLine) Draw() {
+	// TODO
 }
 
-type Lines struct {
-	Vertices  []Vertex2
-	LineWidth float32
-	Color     [3]uint8
-}
-
+/*
 // NewSomething create new instance of Something
 func NewLine(x1, y1, x2, y2 float32) Lines {
 	obj := Lines{}
@@ -63,18 +92,13 @@ func (l *Lines) Draw() {
 	}
 	gl.End()
 }
+*/
 
 // draw redraws the game board and the cells within.
 func DrawScene(window *glfw.Window, objects []Object, angle *float32) {
-
 	// Clear Screen
 	//
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
-	//gl.UseProgram(prog) // TODO
-
-	//*angle = *angle + 5.0
-	//gl.Rotatef(*angle, 0.0, 0.0, 1.0)
-
 	// Draw Objects
 	//
 	for _, obj := range objects {
