@@ -23,7 +23,7 @@ type Points struct {
 }
 
 func (ps *Points) Draw() {
-	gl.PointSize(ps.Size)
+	gl.PointSize(ps.Size) // DIFFERENT
 	gl.Color3ub(ps.Color[0], ps.Color[1], ps.Color[2])
 	gl.Begin(gl.POINTS)
 	for i := 0; i < len(ps.Vertices); i = i + 2 {
@@ -45,7 +45,7 @@ type Lines struct {
 }
 
 func (ls *Lines) Draw() {
-	gl.LineWidth(ls.Width)
+	gl.LineWidth(ls.Width) // DIFFERENT
 	gl.Color3ub(ls.Color[0], ls.Color[1], ls.Color[2])
 	gl.Begin(gl.LINES)
 	for i := 0; i < len(ls.Vertices); i = i + 2 {
@@ -70,6 +70,28 @@ func (ls *LineStripes) Draw() {
 	gl.LineWidth(ls.Width)
 	gl.Color3ub(ls.Color[0], ls.Color[1], ls.Color[2])
 	gl.Begin(gl.LINE_STRIP)
+	for i := 0; i < len(ls.Vertices); i = i + 2 {
+		x := ls.Vertices[i+0]
+		y := ls.Vertices[i+1]
+		gl.Vertex2f(x, y)
+	}
+	gl.End()
+}
+
+// ----------------------------------------------------------------------------
+// LineLoops
+//
+
+type LineLoops struct {
+	Color    [3]uint8
+	Width    float32
+	Vertices []float32 // x y -- x y -- x y -- x y -- x y -- x y --> START
+}
+
+func (ls *LineLoops) Draw() {
+	gl.LineWidth(ls.Width)
+	gl.Color3ub(ls.Color[0], ls.Color[1], ls.Color[2])
+	gl.Begin(gl.LINE_LOOP)
 	for i := 0; i < len(ls.Vertices); i = i + 2 {
 		x := ls.Vertices[i+0]
 		y := ls.Vertices[i+1]
