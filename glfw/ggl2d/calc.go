@@ -49,6 +49,14 @@ func calcMiddlePoint(x1, y1, x2, y2 float32) (float32, float32) {
 	return xm, ym
 }
 
+func calcDistance(x1, y1, x2, y2 float32) float32 {
+
+	xx := (x2 - x1) * (x2 - x1)
+	yy := (y2 - y1) * (y2 - y1)
+
+	return float32(math.Sqrt(float64(xx + yy)))
+}
+
 func calcNormalLine(x1, y1, x2, y2 float32) (float32, float32) {
 
 	dx := x2 - x1
@@ -88,6 +96,22 @@ func tryCalcMiddlePoint(vertices []float32) (float32, float32, bool) {
 	k2, d2 := calcNormalLine(x2, y2, x3, y3)
 
 	return tryCalcSection(k1, d1, k2, d2)
+}
+
+func tryCalcRadius(vertices []float32) (float32, bool) {
+
+	xm, ym, ok := tryCalcMiddlePoint(vertices)
+
+	if ok == false {
+		return 0.0, false
+	}
+
+	x1 := vertices[0]
+	y1 := vertices[1]
+
+	r := calcDistance(x1, y1, xm, ym)
+
+	return r, true
 }
 
 func test1() {
@@ -159,7 +183,21 @@ func test5() {
 	x, y, ok := tryCalcMiddlePoint(vertices)
 
 	if ok {
-		fmt.Printf("middlepoint x:%f y:%f\n", x, y)
+		fmt.Printf("middlepoint x: %f y: %f", x, y)
+		fmt.Println()
+		r, ok := tryCalcRadius(vertices)
+		if ok {
+			fmt.Printf("radius: %f", r)
+			fmt.Println()
+			fmt.Printf("kruemmung: %f at x: 2.0, y: 7.0", 1/r)
+			fmt.Println()
+			v := 50.0  // m/s = 180 km/h
+			m := 700.0 // kg
+			fg := m * v * v * (1.0 / float64(r))
+			fmt.Printf("Fg: %f kN", fg/1000.0)
+			fmt.Println()
+		}
+
 	} else {
 		fmt.Println("no middlepoint")
 	}

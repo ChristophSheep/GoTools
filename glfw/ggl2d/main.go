@@ -9,6 +9,11 @@ func ClearScene() {
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 }
 
+func SetCamera() {
+	gl.LoadIdentity()
+	gl.Scalef(0.02, 0.02, 1.0)
+}
+
 // draw redraws the game board and the cells within.
 func DrawScene(drawables []Drawables) {
 	for _, d := range drawables {
@@ -53,7 +58,7 @@ func createLines(vertices []float32) Lines {
 func createLineStripes(vertices []float32) LineStripes {
 	return LineStripes{
 		Color:    [3]uint8{128, 64, 255},
-		Width:    7.0,
+		Width:    1.0,
 		Vertices: vertices}
 }
 
@@ -67,45 +72,56 @@ func createLineLoops(vertices []float32) LineLoops {
 func createPoints(vertices []float32) Points {
 	return Points{
 		Color:    [3]uint8{255, 255, 0},
-		Size:     8.0,
+		Size:     2.0,
 		Vertices: vertices}
 }
 
 func createObjects() []Drawables {
 	var objects []Drawables
 
-	linesVerts := []float32{
-		+0.0, -0.5, -0.0, +0.5,
-		-1.0, +1.0, +1.0, -1.0,
-		-0.5, +0.0, +0.5, -0.0,
-		-1.0, -1.0, +1.0, +1.0}
+	/*
+		linesVerts := []float32{
+			+0.0, -0.5, -0.0, +0.5,
+			-1.0, +1.0, +1.0, -1.0,
+			-0.5, +0.0, +0.5, -0.0,
+			-1.0, -1.0, +1.0, +1.0}
 
-	stripeVerts := []float32{
-		+0.0, +0.5,
-		-0.5, +0.0,
-		-0.0, -0.5,
-		+0.5, -0.0}
+		stripeVerts := []float32{
+			+0.0, +0.5,
+			-0.5, +0.0,
+			-0.0, -0.5,
+			+0.5, -0.0}
 
-	loopVerts := []float32{
-		+0.0, +0.5,
-		+0.0, +0.0,
-		+0.5, +0.0}
+		loopVerts := []float32{
+			+0.0, +0.5,
+			+0.0, +0.0,
+			+0.5, +0.0}
 
-	lines := createLines(linesVerts)
-	objects = append(objects, &lines)
+			lines := createLines(linesVerts)
+			objects = append(objects, &lines)
 
-	lineStripe := createLineStripes(stripeVerts)
-	objects = append(objects, &lineStripe)
+			lineStripe := createLineStripes(stripeVerts)
+			objects = append(objects, &lineStripe)
 
-	lineLoop := createLineLoops(loopVerts)
-	objects = append(objects, &lineLoop)
+			lineLoop := createLineLoops(loopVerts)
+			objects = append(objects, &lineLoop)
 
-	circle := createLineLoops(createCircle(0.5, 0.5, 0.5, 8))
-	circle.Color = [3]uint8{63, 31, 255}
-	objects = append(objects, &circle)
+			circle := createLineLoops(createCircle(0.5, 0.5, 0.5, 8))
+			circle.Color = [3]uint8{63, 31, 255}
+			objects = append(objects, &circle)
 
-	points := createPoints(linesVerts)
-	objects = append(objects, &points)
+			points := createPoints(linesVerts)
+			objects = append(objects, &points)
+
+	*/
+
+	halfOvalTrackVerts := createHalfOvalTrack()
+
+	halfOvalTrack := createLineStripes(halfOvalTrackVerts)
+	objects = append(objects, &halfOvalTrack)
+
+	trackPoints := createPoints(halfOvalTrackVerts)
+	objects = append(objects, &trackPoints)
 
 	return objects
 }
@@ -126,12 +142,13 @@ func main() {
 
 	// Init GL, GLFW
 	//
-	window := initWindow(400, 400, "gl2d demo")
+	window := initWindow(700, 700, "gl2d demo")
 
 	// Main loop
 	//
 	for !window.ShouldClose() {
 		ClearScene()
+		SetCamera()
 		DrawScene(objects)
 		glfw.PollEvents()
 		window.SwapBuffers()
