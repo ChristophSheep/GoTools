@@ -100,7 +100,7 @@ func createObjects() []Drawables {
 	lineLoop := createLineLoops(loopVerts)
 	objects = append(objects, &lineLoop)
 
-	circle := createLineLoops(createCircle(0.0, 0.0, 0.75, 8))
+	circle := createLineLoops(createCircle(0.5, 0.5, 0.5, 8))
 	circle.Color = [3]uint8{63, 31, 255}
 	objects = append(objects, &circle)
 
@@ -110,7 +110,11 @@ func createObjects() []Drawables {
 	return objects
 }
 
+// go run calc.go geom.go prim.go main.go
+
 func main() {
+
+	test()
 
 	// Examples data
 	//
