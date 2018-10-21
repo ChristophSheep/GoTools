@@ -6,6 +6,7 @@ import (
 )
 
 func ClearScene() {
+	gl.Color3ub(255, 255, 255)
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 }
 
@@ -64,14 +65,14 @@ func createLineStripes(vertices []float64) LineStripes {
 
 func createLineLoops(vertices []float64) LineLoops {
 	return LineLoops{
-		Color:    [3]uint8{128, 255, 128},
-		Width:    2.0,
+		Color:    [3]uint8{128, 64, 255},
+		Width:    1.0,
 		Vertices: vertices}
 }
 
 func createPoints(vertices []float64) Points {
 	return Points{
-		Color:    [3]uint8{255, 255, 0},
+		Color:    [3]uint8{255, 255, 255},
 		Size:     2.0,
 		Vertices: vertices}
 }
@@ -117,7 +118,11 @@ func createObjects() []Drawables {
 
 	ovalTrackVerts := createOvalTrack()
 
-	ovalTrack := createLineStripes(ovalTrackVerts)
+	normals := calcNormalVectors(ovalTrackVerts)
+	normalLines := createLines(normals)
+	objects = append(objects, &normalLines)
+
+	ovalTrack := createLineLoops(ovalTrackVerts)
 	objects = append(objects, &ovalTrack)
 
 	trackPoints := createPoints(ovalTrackVerts)

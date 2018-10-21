@@ -125,18 +125,32 @@ func tryCalcRadius(vertices []float64, n int) (float64, bool) {
 
 	xm, ym, ok := tryCalcMiddlePoint(vertices, n)
 
-	// TODO: straight line -> radius unendlich
-
+	// lines parallel -> radius +inf
 	if ok == false {
-		return 0.0, false
+		return math.Inf(1), true
 	}
 
-	x1 := vertices[2*n+0]
-	y1 := vertices[2*n+1]
-
-	r := calcDistance(x1, y1, xm, ym)
+	xn, yn := getXY(vertices, n)
+	r := calcDistance(xn, yn, xm, ym)
 
 	return r, true
+}
+
+func calcRadi(vertices []float64) []float64 {
+
+	radi := []float64{}
+	count := len(vertices) / 2
+
+	for n := 0; n < count; n++ {
+		r, ok := tryCalcRadius(vertices, n)
+		if ok {
+			radi = append(radi, r)
+		} else {
+			radi = append(radi, math.Inf(+1))
+		}
+	}
+
+	return radi
 }
 
 func test1() {
@@ -231,18 +245,11 @@ func test5() {
 func test6() {
 
 	ovalTrackVerts := createOvalTrack()
+	radi := calcRadi(ovalTrackVerts)
 
-	count := len(ovalTrackVerts) / N
-	for n := 0; n < count; n++ {
-		r, ok := tryCalcRadius(ovalTrackVerts, n)
-		if ok {
-			fmt.Printf("n: %d r:%5.3f \n", n, r)
-		} else {
-			fmt.Printf("n: %d r: NO RADIUS \n", n)
-		}
-
+	for n := 0; n < len(radi); n++ {
+		fmt.Printf("n: %d r:%5.3f \n", n, radi[n])
 	}
-
 }
 
 func tests() {

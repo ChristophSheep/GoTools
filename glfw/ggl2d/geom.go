@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"math"
 )
 
@@ -28,77 +29,146 @@ func createCircle(xm, ym, r float64, sides uint16) []float64 {
 	return vertices
 }
 
+func calcVec(x1, y1, x2, y2 float64) (float64, float64) {
+
+	vx := x2 - x1
+	vy := y2 - y1
+
+	return vx, vy
+}
+
+func normalize(vx, vy float64) (float64, float64) {
+
+	length := math.Sqrt(vx*vx + vy*vy)
+
+	vx = vx / length
+	vy = vy / length
+
+	return vx, vy
+}
+
+func calcNormal(vx, vy float64) (float64, float64) {
+
+	nx := -vy
+	ny := vx
+
+	return normalize(nx, ny)
+}
+
+func calcNormalVectors(vertices []float64) []float64 {
+
+	count := len(vertices) / N
+
+	normals := []float64{}
+
+	for n := 0; n < count; n++ {
+
+		x1, y1 := getXY(vertices, n-1)
+		x2, y2 := getXY(vertices, n+0)
+
+		//            nx,ny
+		//  x2,y2  ^ ------>
+		//         |
+		//         |  vx,vy
+		//  x1,y1  |
+
+		vx, vy := calcVec(x1, y1, x2, y2)
+		nx, ny := calcNormal(vx, vy)
+
+		normals = append(normals, x2)
+		normals = append(normals, y2)
+
+		normals = append(normals, x2+nx)
+		normals = append(normals, y2+ny)
+	}
+
+	return normals
+}
+
+func calcAlpha(s float64, r float64) float64 {
+
+	GK := s / 2.0
+	HP := r
+
+	// sin(half_a) = GK / HP
+
+	halfAlphaRad := math.Asin(GK / HP)
+	alpha := 2.0 * deg(halfAlphaRad)
+
+	return alpha
+}
+
 func createOvalTrack() []float64 {
 
-	r := 25.0
+	r := 25.0 // radius of circle in meter
+	s := 1.0  // single segment length in meter
 
 	vertices := newVertices()
 	t := newTurtle()
 
 	t, vertices = moveTo(t, -r, -r/2.0, vertices)
 
-	// TODO: Formula WRONG
-	dAlpha := 2 * deg(1.0*math.Asin(1.0/(2.0*r))) // segment length = 1m
+	dAlpha := calcAlpha(s, r)
 
-	//fmt.Printf("dAlpha: %f \n", dAlpha)
+	N := 5                            // Clothoide Segments
+	alpha := 0.0                      // Start Angle
+	delta := dAlpha/float64(N) - 0.04 // Magic Correction by trial
+	S := int(360.0/dAlpha)/2 - 4      // Magic Correction by trial
+	M := 25                           // Straight Segments a 1m
 
-	// Start
+	fmt.Printf("clothoide delta: %f \n", delta)
+	fmt.Printf("circle dAlpha: %f \n", dAlpha)
 
-	// 10m straight
-	M := 25
+	// straight
 	for i := 0; i < M; i++ {
-		t, vertices = move(t, 1.0, vertices)
+		t, vertices = move(t, s, vertices)
 	}
-
-	N := 5
-	alpha := 0.0
-	delta := dAlpha/float64(N) - 0.04 // Magic correction by trial
-	S := int(360.0/dAlpha)/2 - 4      // Magic correction by trial
 
 	// clothoide in
 	for i := 0; i < N; i++ {
 		alpha += delta
 		t = turn(t, alpha)
-		t, vertices = move(t, 1.0, vertices)
+		t, vertices = move(t, s, vertices)
 	}
 
 	// circle bow
-
 	for i := 0; i < S; i++ {
 		t = turn(t, dAlpha)
-		t, vertices = move(t, 1.0, vertices)
+		t, vertices = move(t, s, vertices)
 	}
 
 	// clothoide out
 	for i := 0; i < N; i++ {
 		alpha -= delta
 		t = turn(t, alpha)
-		t, vertices = move(t, 1.0, vertices)
+		t, vertices = move(t, s, vertices)
 	}
 
 	// straight
 	for i := 0; i < M; i++ {
-		t, vertices = move(t, 1.0, vertices)
+		t, vertices = move(t, s, vertices)
 	}
 
 	// clothoide in
 	for i := 0; i < N; i++ {
 		alpha += delta
 		t = turn(t, alpha)
-		t, vertices = move(t, 1.0, vertices)
+		t, vertices = move(t, s, vertices)
 	}
 
 	// circle bow
 	for i := 0; i < S; i++ {
 		t = turn(t, dAlpha)
-		t, vertices = move(t, 1.0, vertices)
+		t, vertices = move(t, s, vertices)
 	}
+
+	N-- // MAGIC CORRECTION !!TODO!!
 
 	// clothoide out
 	for i := 0; i < N; i++ {
 		alpha -= delta
 		t = turn(t, alpha)
-		t, vertices = move(t, 1.0, vertices)
+		t, vertices = move(t, s, vertices)
 	}
 
 	return vertices
