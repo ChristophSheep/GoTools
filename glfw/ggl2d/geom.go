@@ -29,7 +29,7 @@ func createCircle(xm, ym, r float64, sides uint16) []float64 {
 	return vertices
 }
 
-func createHalfOvalTrack() []float64 {
+func createOvalTrack() []float64 {
 
 	r := 25.0
 

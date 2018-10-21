@@ -115,12 +115,12 @@ func createObjects() []Drawables {
 
 	*/
 
-	halfOvalTrackVerts := createHalfOvalTrack()
+	ovalTrackVerts := createOvalTrack()
 
-	halfOvalTrack := createLineStripes(halfOvalTrackVerts)
-	objects = append(objects, &halfOvalTrack)
+	ovalTrack := createLineStripes(ovalTrackVerts)
+	objects = append(objects, &ovalTrack)
 
-	trackPoints := createPoints(halfOvalTrackVerts)
+	trackPoints := createPoints(ovalTrackVerts)
 	objects = append(objects, &trackPoints)
 
 	return objects

@@ -71,10 +71,37 @@ func calcNormalLine(x1, y1, x2, y2 float64) (float64, float64) {
 	return kn, d
 }
 
-func tryCalcMiddlePoint(vertices []float64) (float64, float64, bool) {
+const N = 2 // Dimension 2 = xy, Dimension 3 = xyz
+
+func getXY(vertices []float64, n int) (float64, float64) {
+
+	//  For example:
+	//
+	//   60 Points by 120 xy coords
+	//
+	//   ... -2 -1 0 1 2 3 ... -1  0  1  2 ...
+	//   ... 58 59 0 1 2 3 ... 59 60 61 62 ...
+
+	count := len(vertices) / N
+
+	if n < 0 {
+		n = n + count
+	}
+
+	if n >= count {
+		n = n - count
+	}
+
+	x := vertices[2*n+0]
+	y := vertices[2*n+1]
+
+	return x, y
+}
+
+func tryCalcMiddlePoint(vertices []float64, n int) (float64, float64, bool) {
 
 	// p1
-	// 	\      Mp
+	// 	\ <--r--Mp
 	//   \
 	//    p2 ----- p3
 
@@ -83,31 +110,29 @@ func tryCalcMiddlePoint(vertices []float64) (float64, float64, bool) {
 	if len(vertices) < 6 {
 		return 0.0, 0.0, false
 	}
-	x1 := vertices[0]
-	y1 := vertices[1]
 
-	x2 := vertices[2]
-	y2 := vertices[3]
+	xl, yl := getXY(vertices, n-1)
+	xn, yn := getXY(vertices, n+0)
+	xm, ym := getXY(vertices, n+1)
 
-	x3 := vertices[4]
-	y3 := vertices[5]
-
-	k1, d1 := calcNormalLine(x1, y1, x2, y2)
-	k2, d2 := calcNormalLine(x2, y2, x3, y3)
+	k1, d1 := calcNormalLine(xl, yl, xn, yn)
+	k2, d2 := calcNormalLine(xn, yn, xm, ym)
 
 	return tryCalcSection(k1, d1, k2, d2)
 }
 
-func tryCalcRadius(vertices []float64) (float64, bool) {
+func tryCalcRadius(vertices []float64, n int) (float64, bool) {
 
-	xm, ym, ok := tryCalcMiddlePoint(vertices)
+	xm, ym, ok := tryCalcMiddlePoint(vertices, n)
+
+	// TODO: straight line -> radius unendlich
 
 	if ok == false {
 		return 0.0, false
 	}
 
-	x1 := vertices[0]
-	y1 := vertices[1]
+	x1 := vertices[2*n+0]
+	y1 := vertices[2*n+1]
 
 	r := calcDistance(x1, y1, xm, ym)
 
@@ -164,7 +189,7 @@ func test3() {
 func test4() {
 
 	vertices := createCircle(0.5, 0.5, 0.5, 8)
-	x, y, ok := tryCalcMiddlePoint(vertices)
+	x, y, ok := tryCalcMiddlePoint(vertices, 1)
 
 	if ok {
 		fmt.Printf("middlepoint x:%f y:%f\n", x, y)
@@ -180,12 +205,12 @@ func test5() {
 		3.0, 4.0,
 		8.0, 3.0}
 
-	x, y, ok := tryCalcMiddlePoint(vertices)
+	x, y, ok := tryCalcMiddlePoint(vertices, 1)
 
 	if ok {
 		fmt.Printf("middlepoint x: %f y: %f", x, y)
 		fmt.Println()
-		r, ok := tryCalcRadius(vertices)
+		r, ok := tryCalcRadius(vertices, 1)
 		if ok {
 			fmt.Printf("radius: %f", r)
 			fmt.Println()
