@@ -131,7 +131,7 @@ func createObjects() []Drawables {
 
 func main() {
 
-	test()
+	tests()
 
 	// Examples data
 	//

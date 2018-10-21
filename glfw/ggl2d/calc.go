@@ -228,10 +228,33 @@ func test5() {
 	}
 }
 
-func test() {
-	test1()
-	test2()
-	test3()
-	test4()
-	test5()
+func test6() {
+
+	ovalTrackVerts := createOvalTrack()
+
+	count := len(ovalTrackVerts) / N
+	for n := 0; n < count; n++ {
+		r, ok := tryCalcRadius(ovalTrackVerts, n)
+		if ok {
+			fmt.Printf("n: %d r:%5.3f \n", n, r)
+		} else {
+			fmt.Printf("n: %d r: NO RADIUS \n", n)
+		}
+
+	}
+
+}
+
+func tests() {
+
+	/*
+
+		test1()
+		test2()
+		test3()
+		test4()
+		test5()
+
+	*/
+	test6()
 }

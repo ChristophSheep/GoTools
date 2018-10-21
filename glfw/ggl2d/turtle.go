@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"math"
 )
 
@@ -45,7 +44,7 @@ func move(t turtle, d float64, vertices []float64) (turtle, []float64) {
 	vertices = append(vertices, xn)
 	vertices = append(vertices, yn)
 
-	fmt.Println(xn, yn)
+	//fmt.Println(xn, yn)
 
 	t.x = xn
 	t.y = yn
