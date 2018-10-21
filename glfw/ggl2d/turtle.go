@@ -6,9 +6,9 @@ import (
 )
 
 type turtle struct {
-	x     float32
-	y     float32
-	angle float32
+	x     float64
+	y     float64
+	angle float64
 }
 
 func newTurtle() turtle {
@@ -18,15 +18,15 @@ func newTurtle() turtle {
 		angle: 0.0}
 }
 
-func rad(deg float32) float64 {
-	return float64(deg/180.0) * math.Pi
+func rad(deg float64) float64 {
+	return (deg / 180.0) * math.Pi
 }
 
-func deg(rad float64) float32 {
-	return float32((rad / math.Pi) * 180.0)
+func deg(rad float64) float64 {
+	return (rad / math.Pi) * 180.0
 }
 
-func moveTo(t turtle, x float32, y float32, vertices []float32) (turtle, []float32) {
+func moveTo(t turtle, x float64, y float64, vertices []float64) (turtle, []float64) {
 
 	vertices = append(vertices, x)
 	vertices = append(vertices, y)
@@ -37,10 +37,10 @@ func moveTo(t turtle, x float32, y float32, vertices []float32) (turtle, []float
 	return t, vertices
 }
 
-func move(t turtle, d float32, vertices []float32) (turtle, []float32) {
+func move(t turtle, d float64, vertices []float64) (turtle, []float64) {
 
-	xn := d*float32(math.Sin(rad(t.angle))) + t.x
-	yn := d*float32(math.Cos(rad(t.angle))) + t.y
+	xn := d*math.Sin(rad(t.angle)) + t.x
+	yn := d*math.Cos(rad(t.angle)) + t.y
 
 	vertices = append(vertices, xn)
 	vertices = append(vertices, yn)
@@ -53,83 +53,7 @@ func move(t turtle, d float32, vertices []float32) (turtle, []float32) {
 	return t, vertices
 }
 
-func turn(t turtle, delta float32) turtle {
+func turn(t turtle, delta float64) turtle {
 	t.angle += delta
 	return t
-}
-
-func createHalfOvalTrack() []float32 {
-
-	r := 25.0
-
-	vertices := []float32{}
-	t := newTurtle()
-
-	t, vertices = moveTo(t, float32(-r), float32(-r/2.0), vertices)
-
-	// TODO: Formula WRONG
-	dAlpha := 2 * deg(1.0*math.Asin(1.0/(2.0*r))) // segment length = 1m
-
-	fmt.Printf("dAlpha: %f \n", dAlpha)
-
-	// Start
-
-	// 10m straight
-	M := 25
-	for i := 0; i < M; i++ {
-		t, vertices = move(t, 1.0, vertices)
-	}
-
-	N := 5
-	alpha := float32(0.0)
-	delta := dAlpha/float32(N) - 0.07 // Magic correction
-	S := int(360.0/dAlpha)/2 - 2      // Magic correction
-
-	// clothoide in
-	for i := 0; i < N; i++ {
-		alpha += delta
-		t = turn(t, delta)
-		t, vertices = move(t, 1.0, vertices)
-	}
-
-	// circle bow
-
-	for i := 0; i < S; i++ {
-		t = turn(t, dAlpha)
-		t, vertices = move(t, 1.0, vertices)
-	}
-
-	// clothoide out
-	for i := 0; i < N; i++ {
-		alpha -= delta
-		t = turn(t, alpha)
-		t, vertices = move(t, 1.0, vertices)
-	}
-
-	// straight
-	for i := 0; i < M; i++ {
-		t, vertices = move(t, 1.0, vertices)
-	}
-
-	// clothoide in
-	for i := 0; i < N; i++ {
-		alpha += delta
-		t = turn(t, delta)
-		t, vertices = move(t, 1.0, vertices)
-	}
-
-	// circle bow
-	for i := 0; i < S; i++ {
-		t = turn(t, dAlpha)
-		t, vertices = move(t, 1.0, vertices)
-	}
-
-	// clothoide out
-	for i := 0; i < N; i++ {
-		alpha -= delta
-		t = turn(t, alpha)
-		t, vertices = move(t, 1.0, vertices)
-	}
-
-	return vertices
 }

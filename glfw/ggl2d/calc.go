@@ -7,14 +7,14 @@ import (
 
 const EPSILON = 0.00001
 
-func equals(x, y float32, epsilon float64) bool {
-	diff := float64(x - y)
+func equals(x, y float64, epsilon float64) bool {
+	diff := x - y
 	return math.Abs(diff) < epsilon
 }
 
 // calc section of two lines
 //
-func tryCalcSection(k1, d1, k2, d2 float32) (float32, float32, bool) {
+func tryCalcSection(k1, d1, k2, d2 float64) (float64, float64, bool) {
 
 	if equals(k2, k1, EPSILON) {
 		return 0.0, 0.0, false
@@ -29,7 +29,7 @@ func tryCalcSection(k1, d1, k2, d2 float32) (float32, float32, bool) {
 
 // calc k and d of line from points
 //
-func calcLine(x1, y1, x2, y2 float32) (float32, float32) {
+func calcLine(x1, y1, x2, y2 float64) (float64, float64) {
 
 	dx := x2 - x1
 	dy := y2 - y1
@@ -41,7 +41,7 @@ func calcLine(x1, y1, x2, y2 float32) (float32, float32) {
 	return k, d
 }
 
-func calcMiddlePoint(x1, y1, x2, y2 float32) (float32, float32) {
+func calcMiddlePoint(x1, y1, x2, y2 float64) (float64, float64) {
 
 	xm := 0.5 * (x1 + x2)
 	ym := 0.5 * (y1 + y2)
@@ -49,15 +49,15 @@ func calcMiddlePoint(x1, y1, x2, y2 float32) (float32, float32) {
 	return xm, ym
 }
 
-func calcDistance(x1, y1, x2, y2 float32) float32 {
+func calcDistance(x1, y1, x2, y2 float64) float64 {
 
 	xx := (x2 - x1) * (x2 - x1)
 	yy := (y2 - y1) * (y2 - y1)
 
-	return float32(math.Sqrt(float64(xx + yy)))
+	return math.Sqrt(xx + yy)
 }
 
-func calcNormalLine(x1, y1, x2, y2 float32) (float32, float32) {
+func calcNormalLine(x1, y1, x2, y2 float64) (float64, float64) {
 
 	dx := x2 - x1
 	dy := y2 - y1
@@ -71,7 +71,7 @@ func calcNormalLine(x1, y1, x2, y2 float32) (float32, float32) {
 	return kn, d
 }
 
-func tryCalcMiddlePoint(vertices []float32) (float32, float32, bool) {
+func tryCalcMiddlePoint(vertices []float64) (float64, float64, bool) {
 
 	// p1
 	// 	\      Mp
@@ -98,7 +98,7 @@ func tryCalcMiddlePoint(vertices []float32) (float32, float32, bool) {
 	return tryCalcSection(k1, d1, k2, d2)
 }
 
-func tryCalcRadius(vertices []float32) (float32, bool) {
+func tryCalcRadius(vertices []float64) (float64, bool) {
 
 	xm, ym, ok := tryCalcMiddlePoint(vertices)
 
@@ -116,11 +116,11 @@ func tryCalcRadius(vertices []float32) (float32, bool) {
 
 func test1() {
 
-	k1 := float32(1.0)
-	d1 := float32(0.0)
+	k1 := 1.0
+	d1 := 0.0
 
-	k2 := float32(-1.0)
-	d2 := float32(2.0)
+	k2 := -1.0
+	d2 := +2.0
 
 	x, y, ok := tryCalcSection(k1, d1, k2, d2)
 
@@ -131,11 +131,11 @@ func test1() {
 
 func test2() {
 
-	k1 := float32(3.0 / 2.0)
-	d1 := float32(0.0)
+	k1 := 3.0 / 2.0
+	d1 := 0.0
 
-	k2 := float32(-1.0)
-	d2 := float32(2.0)
+	k2 := -1.0
+	d2 := +2.0
 
 	x, y, ok := tryCalcSection(k1, d1, k2, d2)
 
@@ -146,11 +146,11 @@ func test2() {
 
 func test3() {
 
-	k1 := float32(2.0)
-	d1 := float32(1.0)
+	k1 := 2.0
+	d1 := 1.0
 
-	k2 := float32(2.0)
-	d2 := float32(-1.0)
+	k2 := +2.0
+	d2 := -1.0
 
 	x, y, ok := tryCalcSection(k1, d1, k2, d2)
 
@@ -175,7 +175,7 @@ func test4() {
 
 func test5() {
 
-	vertices := []float32{
+	vertices := []float64{
 		2.0, 7.0,
 		3.0, 4.0,
 		8.0, 3.0}

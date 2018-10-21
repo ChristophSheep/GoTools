@@ -25,18 +25,18 @@ type Drawables interface { // Interfaces are named collections of method signatu
 
 type Points struct {
 	Color    [3]uint8
-	Size     float32
-	Vertices []float32 // x y x y
+	Size     float64
+	Vertices []float64 // x y x y
 }
 
 func (ps *Points) Draw() {
-	gl.PointSize(ps.Size) // DIFFERENT
+	gl.PointSize(float32(ps.Size)) // DIFFERENT
 	gl.Color3ub(ps.Color[0], ps.Color[1], ps.Color[2])
 	gl.Begin(gl.POINTS) // DIFFERENT
 	for i := 0; i < len(ps.Vertices); i = i + 2 {
 		x := ps.Vertices[i+0]
 		y := ps.Vertices[i+1]
-		gl.Vertex2f(x, y)
+		gl.Vertex2d(x, y)
 	}
 	gl.End()
 }
@@ -47,18 +47,18 @@ func (ps *Points) Draw() {
 
 type Lines struct {
 	Color    [3]uint8
-	Width    float32
-	Vertices []float32 // x y x y   x y x y   x y x y
+	Width    float64
+	Vertices []float64 // x y x y   x y x y   x y x y
 }
 
 func (ls *Lines) Draw() {
-	gl.LineWidth(ls.Width) // DIFFERENT
+	gl.LineWidth(float32(ls.Width)) // DIFFERENT
 	gl.Color3ub(ls.Color[0], ls.Color[1], ls.Color[2])
 	gl.Begin(gl.LINES) // DIFFERENT
 	for i := 0; i < len(ls.Vertices); i = i + 2 {
 		x := ls.Vertices[i+0]
 		y := ls.Vertices[i+1]
-		gl.Vertex2f(x, y)
+		gl.Vertex2d(x, y)
 	}
 	gl.End()
 }
@@ -68,16 +68,14 @@ func (ls *Lines) Draw() {
 //
 
 type LineStripes struct {
-	Color [3]uint8
-
-	Width float32
-
-	Vertices []float32 // x y -- x y -- x y -- x y -- x y -- x y
+	Color    [3]uint8
+	Width    float64
+	Vertices []float64 // x y -- x y -- x y -- x y -- x y -- x y
 }
 
 func (ls *LineStripes) Draw() {
 
-	gl.LineWidth(ls.Width) // DIFFERENT
+	gl.LineWidth(float32(ls.Width)) // DIFFERENT
 
 	gl.Color3ub(ls.Color[0], ls.Color[1], ls.Color[2])
 
@@ -85,7 +83,7 @@ func (ls *LineStripes) Draw() {
 	for i := 0; i < len(ls.Vertices); i = i + 2 {
 		x := ls.Vertices[i+0]
 		y := ls.Vertices[i+1]
-		gl.Vertex2f(x, y)
+		gl.Vertex2d(x, y)
 	}
 	gl.End()
 }
@@ -95,17 +93,15 @@ func (ls *LineStripes) Draw() {
 //
 
 type LineLoops struct {
-	Color [3]uint8
-
-	Width float32
-
-	Vertices []float32 // x y -- x y -- x y -- x y -- x y -- x y --> START
+	Color    [3]uint8
+	Width    float64
+	Vertices []float64 // x y -- x y -- x y -- x y -- x y -- x y --> START
 
 }
 
 func (ls *LineLoops) Draw() {
 
-	gl.LineWidth(ls.Width)
+	gl.LineWidth(float32(ls.Width))
 
 	gl.Color3ub(ls.Color[0], ls.Color[1], ls.Color[2])
 
@@ -113,7 +109,7 @@ func (ls *LineLoops) Draw() {
 	for i := 0; i < len(ls.Vertices); i = i + 2 {
 		x := ls.Vertices[i+0]
 		y := ls.Vertices[i+1]
-		gl.Vertex2f(x, y)
+		gl.Vertex2d(x, y)
 	}
 	gl.End()
 }

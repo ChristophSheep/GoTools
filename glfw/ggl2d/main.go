@@ -48,28 +48,28 @@ func initWindow(width, height int, title string) *glfw.Window {
 	return window
 }
 
-func createLines(vertices []float32) Lines {
+func createLines(vertices []float64) Lines {
 	return Lines{
 		Color:    [3]uint8{255, 128, 64},
 		Width:    2.0,
 		Vertices: vertices}
 }
 
-func createLineStripes(vertices []float32) LineStripes {
+func createLineStripes(vertices []float64) LineStripes {
 	return LineStripes{
 		Color:    [3]uint8{128, 64, 255},
 		Width:    1.0,
 		Vertices: vertices}
 }
 
-func createLineLoops(vertices []float32) LineLoops {
+func createLineLoops(vertices []float64) LineLoops {
 	return LineLoops{
 		Color:    [3]uint8{128, 255, 128},
 		Width:    2.0,
 		Vertices: vertices}
 }
 
-func createPoints(vertices []float32) Points {
+func createPoints(vertices []float64) Points {
 	return Points{
 		Color:    [3]uint8{255, 255, 0},
 		Size:     2.0,
@@ -127,6 +127,7 @@ func createObjects() []Drawables {
 }
 
 // go run calc.go geom.go prim.go main.go
+// go run calc.go geom.go prim.go turtle.go main.go
 
 func main() {
 
