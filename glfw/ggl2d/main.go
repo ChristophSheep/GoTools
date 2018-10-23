@@ -5,20 +5,37 @@ import (
 	"github.com/go-gl/glfw/v3.2/glfw"
 )
 
-func ClearScene() {
+func ClearBackground() {
 	gl.Color3ub(255, 255, 255)
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 }
 
-func SetCamera() {
+type Layer struct {
+	objects []Drawables
+}
+
+type Camera struct {
+	scale    float64
+	position [2]float64
+}
+
+type Scene struct {
+	layers []Layer
+	camera Camera
+}
+
+func SetCamera(camera Camera) {
 	gl.LoadIdentity()
-	gl.Scalef(0.02, 0.02, 1.0)
+	gl.Scaled(camera.scale, camera.scale, 1.0)
+	gl.Translated(camera.position[0], camera.position[1], 0.0)
 }
 
 // draw redraws the game board and the cells within.
-func DrawScene(drawables []Drawables) {
-	for _, d := range drawables {
-		d.Draw()
+func DrawScene(scene Scene) {
+	for _, layer := range scene.layers {
+		for _, obj := range layer.objects {
+			obj.Draw()
+		}
 	}
 }
 
@@ -77,7 +94,7 @@ func createPoints(vertices []float64) Points {
 		Vertices: vertices}
 }
 
-func createObjects() []Drawables {
+func createScene() Scene {
 	var objects []Drawables
 
 	/*
@@ -116,7 +133,7 @@ func createObjects() []Drawables {
 
 	*/
 
-	ovalTrackVerts := createOvalTrack()
+	ovalTrackVerts := createOvalTrack2()
 
 	normals := calcNormalVectors(ovalTrackVerts)
 	normalLines := createLines(normals)
@@ -128,7 +145,19 @@ func createObjects() []Drawables {
 	trackPoints := createPoints(ovalTrackVerts)
 	objects = append(objects, &trackPoints)
 
-	return objects
+	layer := Layer{}
+	layer.objects = objects
+
+	camera := Camera{}
+	camera.scale = 0.02
+	camera.position[0] = 0.0
+	camera.position[1] = 0.0
+
+	scene := Scene{}
+	scene.layers = append(scene.layers, layer)
+	scene.camera = camera
+
+	return scene
 }
 
 // go run calc.go geom.go prim.go main.go
@@ -144,18 +173,52 @@ func main() {
 
 	// Create Objects
 	//
-	objects := createObjects()
+	scene := createScene()
 
 	// Init GL, GLFW
 	//
 	window := initWindow(700, 700, "gl2d demo")
+	if window == nil {
+		glfw.Terminate()
+		return
+	}
+
+	keyCallback := func(w *glfw.Window, key glfw.Key, scancode int, action glfw.Action, mods glfw.ModifierKey) {
+
+		if mods == glfw.ModShift && key == glfw.KeyUp {
+			scene.camera.scale *= 0.5
+		}
+
+		if mods == glfw.ModShift && key == glfw.KeyDown {
+			scene.camera.scale /= 0.5
+		}
+
+		if key == glfw.KeyUp {
+			scene.camera.position[1] += 1.0
+		}
+
+		if key == glfw.KeyDown {
+			scene.camera.position[1] -= 1.0
+		}
+
+		if key == glfw.KeyLeft {
+			scene.camera.position[0] -= 1.0
+		}
+
+		if key == glfw.KeyRight {
+			scene.camera.position[0] += 1.0
+		}
+
+	}
+
+	window.SetKeyCallback(keyCallback)
 
 	// Main loop
 	//
 	for !window.ShouldClose() {
-		ClearScene()
-		SetCamera()
-		DrawScene(objects)
+		ClearBackground()
+		SetCamera(scene.camera)
+		DrawScene(scene)
 		glfw.PollEvents()
 		window.SwapBuffers()
 	}

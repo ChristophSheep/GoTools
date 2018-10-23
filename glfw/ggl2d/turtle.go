@@ -36,6 +36,10 @@ func moveTo(t turtle, x float64, y float64, vertices []float64) (turtle, []float
 	return t, vertices
 }
 
+func forward(t turtle, d float64, vertices []float64) (turtle, []float64) {
+	return move(t, d, vertices)
+}
+
 func move(t turtle, d float64, vertices []float64) (turtle, []float64) {
 
 	xn := d*math.Sin(rad(t.angle)) + t.x
@@ -50,6 +54,16 @@ func move(t turtle, d float64, vertices []float64) (turtle, []float64) {
 	t.y = yn
 
 	return t, vertices
+}
+
+func right(t turtle, delta float64) turtle {
+	t.angle += delta
+	return t
+}
+
+func left(t turtle, delta float64) turtle {
+	t.angle -= delta
+	return t
 }
 
 func turn(t turtle, delta float64) turtle {

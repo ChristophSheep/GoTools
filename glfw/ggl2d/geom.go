@@ -98,6 +98,76 @@ func calcAlpha(s float64, r float64) float64 {
 	return alpha
 }
 
+func createOvalTrack2() []float64 {
+
+	x := -40.0
+	y := 0.0
+	s := 1.0
+
+	vertices := newVertices()
+	t := newTurtle()
+
+	t, vertices = moveTo(t, x, y, vertices)
+
+	S := 20
+	N := 41
+	M := 5
+	alpha := 2.0
+	delta := alpha / float64(15) // 15 by design
+
+	//
+	// 0° > -80° --> Half circle
+	//
+	for i := 0; i < N; i++ {
+		t, vertices = forward(t, s, vertices)
+		t = right(t, alpha)
+	}
+
+	fmt.Printf("Alpha after circle: %f \n", t.angle)
+
+	//
+	// -80° > -90° --> Clothoide
+	//
+	for i := 0; i < M; i++ {
+		t, vertices = forward(t, s, vertices)
+		alpha = alpha - delta
+		t = turn(t, alpha)
+	}
+
+	fmt.Printf("Alpha after clothoide: %f \n", t.angle)
+
+	//
+	// -90°, 20m --> Straight
+	//
+	for i := 0; i < S; i++ {
+		t, vertices = forward(t, s, vertices)
+	}
+
+	//
+	// -90° > -80° --> Clothoide
+	//
+	for i := 0; i < M; i++ {
+		t, vertices = forward(t, s, vertices)
+		alpha = alpha + delta
+		t = turn(t, alpha)
+	}
+
+	fmt.Printf("Alpha after clothoide: %f \n", alpha)
+
+	for i := 0; i < N; i++ {
+		t, vertices = forward(t, s, vertices)
+		t = right(t, alpha)
+	}
+
+	fmt.Printf("Angle after circle: %f \n", t.angle)
+
+	//
+	// -80° > -180° -> circle 40m
+	//
+
+	return vertices
+}
+
 func createOvalTrack() []float64 {
 
 	r := 25.0 // radius of circle in meter
