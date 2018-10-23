@@ -48,6 +48,10 @@ func initWindow(width, height int, title string) *glfw.Window {
 		panic(err)
 	}
 
+	// Anti Aliasing
+	//
+	glfw.WindowHint(glfw.Samples, 4)
+
 	// Create Window
 	//
 	window, err := glfw.CreateWindow(width, height, title, nil, nil)
@@ -68,7 +72,7 @@ func initWindow(width, height int, title string) *glfw.Window {
 
 func createLines(vertices []float64) Lines {
 	return Lines{
-		Color:    [3]uint8{255, 128, 64},
+		Color:    [3]uint8{200, 200, 200},
 		Width:    2.0,
 		Vertices: vertices}
 }
@@ -76,21 +80,21 @@ func createLines(vertices []float64) Lines {
 func createLineStripes(vertices []float64) LineStripes {
 	return LineStripes{
 		Color:    [3]uint8{128, 64, 255},
-		Width:    1.0,
+		Width:    3.0,
 		Vertices: vertices}
 }
 
 func createLineLoops(vertices []float64) LineLoops {
 	return LineLoops{
-		Color:    [3]uint8{128, 64, 255},
-		Width:    1.0,
+		Color:    [3]uint8{255, 255, 128},
+		Width:    3.0,
 		Vertices: vertices}
 }
 
 func createPoints(vertices []float64) Points {
 	return Points{
-		Color:    [3]uint8{255, 255, 255},
-		Size:     2.0,
+		Color:    [3]uint8{64, 64, 255},
+		Size:     7.0,
 		Vertices: vertices}
 }
 
@@ -175,6 +179,9 @@ func main() {
 	//
 	scene := createScene()
 
+	//	glfw.WindowHint(glfw.DEPTH_BITS, 16);
+	//  glfw.WindowHint(glfw.TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
+
 	// Init GL, GLFW
 	//
 	window := initWindow(700, 700, "gl2d demo")
@@ -185,26 +192,28 @@ func main() {
 
 	keyCallback := func(w *glfw.Window, key glfw.Key, scancode int, action glfw.Action, mods glfw.ModifierKey) {
 
-		if mods == glfw.ModShift && key == glfw.KeyUp {
-			scene.camera.scale *= 0.5
+		// ZOOM - in, out
+		//
+		if mods == glfw.ModShift {
+			if key == glfw.KeyUp {
+				scene.camera.scale *= 0.5
+			}
+			if key == glfw.KeyDown {
+				scene.camera.scale /= 0.5
+			}
 		}
 
-		if mods == glfw.ModShift && key == glfw.KeyDown {
-			scene.camera.scale /= 0.5
-		}
-
+		// MOVE CAMERA - left, right, up, down
+		//
 		if key == glfw.KeyUp {
 			scene.camera.position[1] += 1.0
 		}
-
 		if key == glfw.KeyDown {
 			scene.camera.position[1] -= 1.0
 		}
-
 		if key == glfw.KeyLeft {
 			scene.camera.position[0] -= 1.0
 		}
-
 		if key == glfw.KeyRight {
 			scene.camera.position[0] += 1.0
 		}

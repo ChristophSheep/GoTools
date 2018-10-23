@@ -128,13 +128,15 @@ func createOvalTrack2() []float64 {
 	//
 	// -80° > -90° --> Clothoide
 	//
+	sum := 0.0
 	for i := 0; i < M; i++ {
 		t, vertices = forward(t, s, vertices)
 		alpha = alpha - delta
+		sum += alpha
 		t = turn(t, alpha)
 	}
 
-	fmt.Printf("Alpha after clothoide: %f \n", t.angle)
+	fmt.Printf("Sum Alpha after clothoide: %f \n", sum)
 
 	//
 	// -90°, 20m --> Straight
