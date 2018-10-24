@@ -1,4 +1,4 @@
-package main // TODO
+package model // TODO
 
 import (
 	"fmt"

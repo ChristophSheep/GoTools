@@ -1,37 +1,110 @@
-package main
+package view
 
 import (
 	"github.com/go-gl/gl/v2.1/gl"
 )
 
-//  TODOS
-//  =====
-//
-// 		- Drawing order
-// 		- Id
-// 		- Name
+// TODO:
+
+// - Dimension const N = 2
+// - Id, Name
+// - Style (ColorARGB, Width)
 
 // ----------------------------------------------------------------------------
-// Drawables
-//
+// Interfaces
+// ----------------------------------------------------------------------------
 
-type Drawables interface { // Interfaces are named collections of method signatures.
+type Drawables interface {
 	Draw()
 }
 
 // ----------------------------------------------------------------------------
-// Points
-//
+// Types
+// ----------------------------------------------------------------------------
+
+type Layer struct {
+	objects []Drawables
+}
+
+type Camera struct {
+	scale    float64
+	position [2]float64
+}
+
+type Scene struct {
+	layers []Layer
+	camera Camera
+}
 
 type Points struct {
 	Color    [3]uint8
-	Size     float64
-	Vertices []float64 // x y x y
+	Width    float64
+	Vertices []float64
 }
 
+type Lines struct {
+	Color    [3]uint8
+	Width    float64
+	Vertices []float64
+}
+
+type LineStripes struct {
+	Color    [3]uint8
+	Width    float64
+	Vertices []float64
+}
+
+type LineLoops struct {
+	Color    [3]uint8
+	Width    float64
+	Vertices []float64
+}
+
+// ----------------------------------------------------------------------------
+// Creator functions
+// ----------------------------------------------------------------------------
+
+func createLines(vertices []float64) Lines {
+	return Lines{
+		Color:    [3]uint8{200, 200, 200},
+		Width:    2.0,
+		Vertices: vertices}
+}
+
+func createLineStripes(vertices []float64) LineStripes {
+	return LineStripes{
+		Color:    [3]uint8{128, 64, 255},
+		Width:    3.0,
+		Vertices: vertices}
+}
+
+func createLineLoops(vertices []float64) LineLoops {
+	return LineLoops{
+		Color:    [3]uint8{255, 255, 128},
+		Width:    3.0,
+		Vertices: vertices}
+}
+
+func createPoints(vertices []float64) Points {
+	return Points{
+		Color:    [3]uint8{64, 64, 255},
+		Width:    7.0,
+		Vertices: vertices}
+}
+
+// ----------------------------------------------------------------------------
+// Draw functions
+// ----------------------------------------------------------------------------
+
+/*
+	Points
+*/
 func (ps *Points) Draw() {
-	gl.PointSize(float32(ps.Size)) // DIFFERENT
+
+	gl.PointSize(float32(ps.Width)) // DIFFERENT
+
 	gl.Color3ub(ps.Color[0], ps.Color[1], ps.Color[2])
+
 	gl.Begin(gl.POINTS) // DIFFERENT
 	for i := 0; i < len(ps.Vertices); i = i + 2 {
 		x := ps.Vertices[i+0]
@@ -41,19 +114,15 @@ func (ps *Points) Draw() {
 	gl.End()
 }
 
-// ----------------------------------------------------------------------------
-// Lines
-//
-
-type Lines struct {
-	Color    [3]uint8
-	Width    float64
-	Vertices []float64 // x y x y   x y x y   x y x y
-}
-
+/*
+	Lines
+*/
 func (ls *Lines) Draw() {
+
 	gl.LineWidth(float32(ls.Width)) // DIFFERENT
+
 	gl.Color3ub(ls.Color[0], ls.Color[1], ls.Color[2])
+
 	gl.Begin(gl.LINES) // DIFFERENT
 	for i := 0; i < len(ls.Vertices); i = i + 2 {
 		x := ls.Vertices[i+0]
@@ -63,16 +132,9 @@ func (ls *Lines) Draw() {
 	gl.End()
 }
 
-// ----------------------------------------------------------------------------
-// LineStripes
-//
-
-type LineStripes struct {
-	Color    [3]uint8
-	Width    float64
-	Vertices []float64 // x y -- x y -- x y -- x y -- x y -- x y
-}
-
+/*
+	LineStripes
+*/
 func (ls *LineStripes) Draw() {
 
 	gl.LineWidth(float32(ls.Width)) // DIFFERENT
@@ -88,17 +150,9 @@ func (ls *LineStripes) Draw() {
 	gl.End()
 }
 
-// ----------------------------------------------------------------------------
-// LineLoops
-//
-
-type LineLoops struct {
-	Color    [3]uint8
-	Width    float64
-	Vertices []float64 // x y -- x y -- x y -- x y -- x y -- x y --> START
-
-}
-
+/*
+	LineLoops
+*/
 func (ls *LineLoops) Draw() {
 
 	gl.LineWidth(float32(ls.Width))
@@ -113,6 +167,9 @@ func (ls *LineLoops) Draw() {
 	}
 	gl.End()
 }
+
+// TODO
+// ----
 
 //  id 		 	uint64		= 0
 //  type		uint32		= 1 // lines

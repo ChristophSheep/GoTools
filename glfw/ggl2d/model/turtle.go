@@ -1,17 +1,17 @@
-package main
+package model
 
 import (
 	"math"
 )
 
-type turtle struct {
+type Turtle struct {
 	x     float64
 	y     float64
 	angle float64
 }
 
-func newTurtle() turtle {
-	return turtle{
+func newTurtle() Turtle {
+	return Turtle{
 		x:     0.0,
 		y:     0.0,
 		angle: 0.0}
@@ -25,7 +25,7 @@ func deg(rad float64) float64 {
 	return (rad / math.Pi) * 180.0
 }
 
-func moveTo(t turtle, x float64, y float64, vertices []float64) (turtle, []float64) {
+func moveTo(t Turtle, x float64, y float64, vertices []float64) (Turtle, []float64) {
 
 	vertices = append(vertices, x)
 	vertices = append(vertices, y)
@@ -36,11 +36,11 @@ func moveTo(t turtle, x float64, y float64, vertices []float64) (turtle, []float
 	return t, vertices
 }
 
-func forward(t turtle, d float64, vertices []float64) (turtle, []float64) {
+func forward(t Turtle, d float64, vertices []float64) (Turtle, []float64) {
 	return move(t, d, vertices)
 }
 
-func move(t turtle, d float64, vertices []float64) (turtle, []float64) {
+func move(t Turtle, d float64, vertices []float64) (Turtle, []float64) {
 
 	xn := d*math.Sin(rad(t.angle)) + t.x
 	yn := d*math.Cos(rad(t.angle)) + t.y
@@ -48,25 +48,23 @@ func move(t turtle, d float64, vertices []float64) (turtle, []float64) {
 	vertices = append(vertices, xn)
 	vertices = append(vertices, yn)
 
-	//fmt.Println(xn, yn)
-
 	t.x = xn
 	t.y = yn
 
 	return t, vertices
 }
 
-func right(t turtle, delta float64) turtle {
+func right(t Turtle, delta float64) Turtle {
 	t.angle += delta
 	return t
 }
 
-func left(t turtle, delta float64) turtle {
+func left(t Turtle, delta float64) Turtle {
 	t.angle -= delta
 	return t
 }
 
-func turn(t turtle, delta float64) turtle {
+func turn(t Turtle, delta float64) Turtle {
 	t.angle += delta
 	return t
 }

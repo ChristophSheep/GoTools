@@ -1,4 +1,4 @@
-package main
+package model
 
 import (
 	"fmt"
@@ -233,8 +233,6 @@ func createOvalTrack() []float64 {
 		t = turn(t, dAlpha)
 		t, vertices = move(t, s, vertices)
 	}
-
-	N-- // MAGIC CORRECTION !!TODO!!
 
 	// clothoide out
 	for i := 0; i < N; i++ {

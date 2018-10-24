@@ -1,162 +1,42 @@
 package main
 
 import (
-	"github.com/go-gl/gl/v2.1/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"
 )
 
-func ClearBackground() {
-	gl.Color3ub(255, 255, 255)
-	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
-}
-
-type Layer struct {
-	objects []Drawables
-}
-
-type Camera struct {
-	scale    float64
-	position [2]float64
-}
-
-type Scene struct {
-	layers []Layer
-	camera Camera
-}
-
-func SetCamera(camera Camera) {
-	gl.LoadIdentity()
-	gl.Scaled(camera.scale, camera.scale, 1.0)
-	gl.Translated(camera.position[0], camera.position[1], 0.0)
-}
-
-// draw redraws the game board and the cells within.
-func DrawScene(scene Scene) {
-	for _, layer := range scene.layers {
-		for _, obj := range layer.objects {
-			obj.Draw()
-		}
-	}
-}
-
-func initWindow(width, height int, title string) *glfw.Window {
-
-	// Init GLFW
-	//
-	err := glfw.Init()
-	if err != nil {
-		panic(err)
-	}
-
-	// Anti Aliasing
-	//
-	glfw.WindowHint(glfw.Samples, 4)
-
-	// Create Window
-	//
-	window, err := glfw.CreateWindow(width, height, title, nil, nil)
-	if err != nil {
-		panic(err)
-	}
-
-	window.MakeContextCurrent()
-
-	// Init OpenGL
-	//
-	if err := gl.Init(); err != nil {
-		panic(err)
-	}
-
-	return window
-}
-
-func createLines(vertices []float64) Lines {
-	return Lines{
-		Color:    [3]uint8{200, 200, 200},
-		Width:    2.0,
-		Vertices: vertices}
-}
-
-func createLineStripes(vertices []float64) LineStripes {
-	return LineStripes{
-		Color:    [3]uint8{128, 64, 255},
-		Width:    3.0,
-		Vertices: vertices}
-}
-
-func createLineLoops(vertices []float64) LineLoops {
-	return LineLoops{
-		Color:    [3]uint8{255, 255, 128},
-		Width:    3.0,
-		Vertices: vertices}
-}
-
-func createPoints(vertices []float64) Points {
-	return Points{
-		Color:    [3]uint8{64, 64, 255},
-		Size:     7.0,
-		Vertices: vertices}
-}
-
 func createScene() Scene {
-	var objects []Drawables
 
-	/*
-		linesVerts := []float32{
-			+0.0, -0.5, -0.0, +0.5,
-			-1.0, +1.0, +1.0, -1.0,
-			-0.5, +0.0, +0.5, -0.0,
-			-1.0, -1.0, +1.0, +1.0}
+	// Examples data
+	//
+	// http://graphics.stanford.edu/data/3Dscanrep/
 
-		stripeVerts := []float32{
-			+0.0, +0.5,
-			-0.5, +0.0,
-			-0.0, -0.5,
-			+0.5, -0.0}
-
-		loopVerts := []float32{
-			+0.0, +0.5,
-			+0.0, +0.0,
-			+0.5, +0.0}
-
-			lines := createLines(linesVerts)
-			objects = append(objects, &lines)
-
-			lineStripe := createLineStripes(stripeVerts)
-			objects = append(objects, &lineStripe)
-
-			lineLoop := createLineLoops(loopVerts)
-			objects = append(objects, &lineLoop)
-
-			circle := createLineLoops(createCircle(0.5, 0.5, 0.5, 8))
-			circle.Color = [3]uint8{63, 31, 255}
-			objects = append(objects, &circle)
-
-			points := createPoints(linesVerts)
-			objects = append(objects, &points)
-
-	*/
-
+	// Create Model
 	ovalTrackVerts := createOvalTrack2()
+	normalVectors := calcNormalVectors(ovalTrackVerts)
 
-	normals := calcNormalVectors(ovalTrackVerts)
-	normalLines := createLines(normals)
-	objects = append(objects, &normalLines)
+	// Create ViewModels
+	var objects []Drawables
 
 	ovalTrack := createLineLoops(ovalTrackVerts)
 	objects = append(objects, &ovalTrack)
 
+	normalVectorLines := createLines(normalVectors)
+	objects = append(objects, &normalVectorLines)
+
 	trackPoints := createPoints(ovalTrackVerts)
 	objects = append(objects, &trackPoints)
 
+	// Layer
 	layer := Layer{}
 	layer.objects = objects
 
+	// Camera
 	camera := Camera{}
 	camera.scale = 0.02
 	camera.position[0] = 0.0
 	camera.position[1] = 0.0
 
+	// Scene
 	scene := Scene{}
 	scene.layers = append(scene.layers, layer)
 	scene.camera = camera
@@ -169,11 +49,10 @@ func createScene() Scene {
 
 func main() {
 
-	tests()
+	// tests()
 
-	// Examples data
-	//
-	// http://graphics.stanford.edu/data/3Dscanrep/
+	// model := createModel()
+	// viewModel = createViewModel(model)
 
 	// Create Objects
 	//
@@ -190,46 +69,20 @@ func main() {
 		return
 	}
 
-	keyCallback := func(w *glfw.Window, key glfw.Key, scancode int, action glfw.Action, mods glfw.ModifierKey) {
-
-		// ZOOM - in, out
-		//
-		if mods == glfw.ModShift {
-			if key == glfw.KeyUp {
-				scene.camera.scale *= 0.5
-			}
-			if key == glfw.KeyDown {
-				scene.camera.scale /= 0.5
-			}
-		}
-
-		// MOVE CAMERA - left, right, up, down
-		//
-		if key == glfw.KeyUp {
-			scene.camera.position[1] += 1.0
-		}
-		if key == glfw.KeyDown {
-			scene.camera.position[1] -= 1.0
-		}
-		if key == glfw.KeyLeft {
-			scene.camera.position[0] -= 1.0
-		}
-		if key == glfw.KeyRight {
-			scene.camera.position[0] += 1.0
-		}
-
-	}
-
-	window.SetKeyCallback(keyCallback)
+	window.SetKeyCallback(keyCallback) // Controller
 
 	// Main loop
 	//
 	for !window.ShouldClose() {
+
 		ClearBackground()
 		SetCamera(scene.camera)
 		DrawScene(scene)
+
 		glfw.PollEvents()
 		window.SwapBuffers()
+
+		// TODO: wait 60fps
 	}
 
 	// Clean up
@@ -264,3 +117,39 @@ func main() {
 // https://www.khronos.org/opengl/wiki/Primitive#Point_primitives
 // https://programming.guide/go/read-file-line-by-line.html
 // https://stackoverflow.com/questions/14426366/what-is-an-idiomatic-way-of-representing-enums-in-go
+
+/*
+	linesVerts := []float32{
+		+0.0, -0.5, -0.0, +0.5,
+		-1.0, +1.0, +1.0, -1.0,
+		-0.5, +0.0, +0.5, -0.0,
+		-1.0, -1.0, +1.0, +1.0}
+
+	stripeVerts := []float32{
+		+0.0, +0.5,
+		-0.5, +0.0,
+		-0.0, -0.5,
+		+0.5, -0.0}
+
+	loopVerts := []float32{
+		+0.0, +0.5,
+		+0.0, +0.0,
+		+0.5, +0.0}
+
+		lines := createLines(linesVerts)
+		objects = append(objects, &lines)
+
+		lineStripe := createLineStripes(stripeVerts)
+		objects = append(objects, &lineStripe)
+
+		lineLoop := createLineLoops(loopVerts)
+		objects = append(objects, &lineLoop)
+
+		circle := createLineLoops(createCircle(0.5, 0.5, 0.5, 8))
+		circle.Color = [3]uint8{63, 31, 255}
+		objects = append(objects, &circle)
+
+		points := createPoints(linesVerts)
+		objects = append(objects, &points)
+
+*/
