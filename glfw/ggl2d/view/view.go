@@ -24,7 +24,7 @@ func DrawScene(scene Scene) {
 	}
 }
 
-func initWindow(width, height int, title string) *glfw.Window {
+func InitGlAndCreateWindow(width, height int, title string) *glfw.Window {
 
 	// Init GLFW
 	//
