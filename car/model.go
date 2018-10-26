@@ -60,6 +60,52 @@ func calcNormal(vx, vy float64) (float64, float64) {
 	return normalize(nx, ny)
 }
 
+func calcVectorsWithRadi(vertices []float64, radi []float64, c float64) []float64 {
+
+	count := len(vertices) / N
+
+	normals := []float64{}
+
+	for n := 0; n < count; n++ {
+
+		r := radi[n]
+
+		k := 0.0
+		if r == math.Inf(1) {
+			k = 0.0
+		} else if r == 0.0 {
+			k = 0.0
+		} else {
+			k = 1.0 / r
+		}
+
+		fmt.Printf("n: %f , k: %f\n", n, k)
+
+		x1, y1 := getXY(vertices, n-1)
+		x2, y2 := getXY(vertices, n+0)
+
+		//            nx,ny
+		//  x2,y2  ^ ------>
+		//         |
+		//         |  vx,vy
+		//  x1,y1  |
+
+		vx, vy := calcVec(x1, y1, x2, y2)
+		nx, ny := calcNormal(vx, vy)
+
+		nx *= k * c
+		ny *= k * c
+
+		normals = append(normals, x2)
+		normals = append(normals, y2)
+
+		normals = append(normals, x2+nx)
+		normals = append(normals, y2+ny)
+	}
+
+	return normals
+}
+
 func calcNormalVectors(vertices []float64) []float64 {
 
 	count := len(vertices) / N
@@ -103,7 +149,22 @@ func calcAlpha(s float64, r float64) float64 {
 	return alpha
 }
 
-func arc(isRight bool, steps int, s float64, k float64, vs []float64, t Turtle) (Turtle, []float64) {
+// ----------------------------------------------------------------------------
+// Segment types:
+//
+//     - line
+//     - arc
+//     - clothoide
+//
+
+const (
+	IN    = true
+	OUT   = false
+	RIGHT = true
+	LEFT  = false
+)
+
+func arc(steps int, s float64, isRight bool, k float64, vs []float64, t Turtle) (Turtle, []float64) {
 	for step := 0; step < steps; step++ {
 		t, vs = forward(t, s, vs)
 		if isRight {
@@ -115,7 +176,7 @@ func arc(isRight bool, steps int, s float64, k float64, vs []float64, t Turtle) 
 	return t, vs
 }
 
-func clothoide(isRight bool, in bool, steps int, s float64, k float64, vs []float64, t Turtle) (Turtle, []float64) {
+func clothoide(steps int, s float64, isRight bool, in bool, k float64, vs []float64, t Turtle) (Turtle, []float64) {
 
 	dk := k / float64(steps)
 	ck := 0.0
@@ -135,8 +196,6 @@ func clothoide(isRight bool, in bool, steps int, s float64, k float64, vs []floa
 			ck = ck - dk
 		}
 
-		//fmt.Printf("clothoide ck:%f", ck)
-
 		if isRight {
 			t = right(t, ck)
 		} else {
@@ -153,7 +212,51 @@ func line(steps int, s float64, vs []float64, t Turtle) (Turtle, []float64) {
 	return t, vs
 }
 
+func createTurtleVerts() (Turtle, []float64) {
+	vs := createVertices()
+	t := createTurtle()
+	return t, vs
+}
+
 func createAnyTrack() []float64 {
+
+	t, vs := createTurtleVerts()
+
+	x := -20.0 // Start point
+	y := -10.0 // Start point
+	t, vs = moveTo(t, x, y, vs)
+
+	s := 1.0 // s .. step length 1m
+	k := 4.0 // k .. krümmung alpha 2 Grad after s 1m
+
+	t, vs = line(10, s, vs, t)
+	t, vs = clothoide(15, s, RIGHT, IN, k, vs, t)
+	t, vs = arc(25, s, RIGHT, k, vs, t)
+	t, vs = clothoide(5, s, RIGHT, OUT, k, vs, t)
+	t, vs = clothoide(5, s, LEFT, IN, k, vs, t)
+	t, vs = arc(55, s, LEFT, k, vs, t)
+	t, vs = clothoide(5, s, LEFT, OUT, k, vs, t)
+	t, vs = line(41, s, vs, t)
+	t, vs = clothoide(5, s, LEFT, IN, k, vs, t)
+	t, vs = arc(15, s, LEFT, k, vs, t)
+	t, vs = clothoide(5, s, LEFT, OUT, k, vs, t)
+	t, vs = line(33, s, vs, t)
+	t, vs = clothoide(5, s, LEFT, IN, k+2, vs, t)
+	t, vs = arc(10, s, LEFT, k+2, vs, t)
+	t, vs = clothoide(5, s, LEFT, OUT, k+2, vs, t)
+	t, vs = line(30, s, vs, t)
+	t, vs = clothoide(5, s, LEFT, IN, k+4, vs, t)
+	t, vs = arc(18, s, LEFT, k+4, vs, t)
+	t, vs = clothoide(5, s, LEFT, OUT, k+4, vs, t)
+	t, vs = line(13, s, vs, t)
+	t, vs = clothoide(5, s, RIGHT, IN, k+6, vs, t)
+	t, vs = arc(4, s, RIGHT, k+6, vs, t)
+	t, vs = clothoide(5, s, RIGHT, OUT, k+6, vs, t)
+
+	return vs
+}
+
+func createEightTrack() []float64 {
 
 	vs := createVertices()
 	t := createTurtle()
@@ -169,162 +272,15 @@ func createAnyTrack() []float64 {
 	ls := 55  // Line segments
 	cs := 10  // Clothoide segments
 
-	in := true
-	out := false
-	isRight := true
-	isLeft := false
-
 	//t, vs = arc(isRight, as, s, k, vs, t)
 	//t, vs = clothoide(isRight, out, cs, s, k, vs, t)
 	t, vs = line(ls+1, s, vs, t)
-	t, vs = clothoide(isRight, in, cs, s, k, vs, t)
-	t, vs = arc(isRight, as, s, k, vs, t)
-	t, vs = clothoide(isRight, out, cs, s, k, vs, t)
+	t, vs = clothoide(cs, s, RIGHT, IN, k, vs, t)
+	t, vs = arc(as, s, RIGHT, k, vs, t)
+	t, vs = clothoide(cs, s, RIGHT, OUT, k, vs, t)
 	t, vs = line(ls-8, s, vs, t)
-	t, vs = clothoide(isLeft, in, cs, s, k, vs, t)
-	t, vs = arc(isLeft, as, s, k, vs, t)
+	t, vs = clothoide(cs, s, LEFT, IN, k, vs, t)
+	t, vs = arc(as, s, LEFT, k, vs, t)
 
 	return vs
-}
-
-func createOvalTrack2() []float64 {
-
-	x := -40.0
-	y := 0.0
-	s := 1.0
-
-	vertices := createVertices()
-	t := createTurtle()
-
-	t, vertices = moveTo(t, x, y, vertices)
-
-	S := 20
-	N := 41
-	M := 5
-	alpha := 2.0
-	delta := alpha / float64(15) // 15 by design
-
-	//
-	// 0° > -80° --> Half circle
-	//
-
-	fmt.Printf("Alpha after circle: %f \n", t.angle)
-
-	//
-	// -80° > -90° --> Clothoide
-	//
-	sum := 0.0
-	for i := 0; i < M; i++ {
-		t, vertices = forward(t, s, vertices)
-		alpha = alpha - delta
-		sum += alpha
-		t = turn(t, alpha)
-	}
-
-	fmt.Printf("Sum Alpha after clothoide: %f \n", sum)
-
-	//
-	// -90°, 20m --> Straight
-	//
-	for i := 0; i < S; i++ {
-		t, vertices = forward(t, s, vertices)
-	}
-
-	//
-	// -90° > -80° --> Clothoide
-	//
-	for i := 0; i < M; i++ {
-		t, vertices = forward(t, s, vertices)
-		alpha = alpha + delta
-		t = turn(t, alpha)
-	}
-
-	fmt.Printf("Alpha after clothoide: %f \n", alpha)
-
-	for i := 0; i < N; i++ {
-		t, vertices = forward(t, s, vertices)
-		t = right(t, alpha)
-	}
-
-	fmt.Printf("Angle after circle: %f \n", t.angle)
-
-	//
-	// -80° > -180° -> circle 40m
-	//
-
-	return vertices
-}
-
-func createOvalTrack() []float64 {
-
-	r := 25.0 // radius of circle in meter
-	s := 1.0  // single segment length in meter
-
-	vertices := createVertices()
-	t := createTurtle()
-
-	t, vertices = moveTo(t, -r, -r/2.0, vertices)
-
-	dAlpha := calcAlpha(s, r)
-
-	N := 5                            // Clothoide Segments
-	alpha := 0.0                      // Start Angle
-	delta := dAlpha/float64(N) - 0.04 // Magic Correction by trial
-	S := int(360.0/dAlpha)/2 - 4      // Magic Correction by trial
-	M := 25                           // Straight Segments a 1m
-
-	fmt.Printf("clothoide delta: %f \n", delta)
-	fmt.Printf("circle dAlpha: %f \n", dAlpha)
-
-	// straight
-	for i := 0; i < M; i++ {
-		t, vertices = forward(t, s, vertices)
-	}
-
-	// clothoide in
-	for i := 0; i < N; i++ {
-		alpha += delta
-		t = turn(t, alpha)
-		t, vertices = forward(t, s, vertices)
-	}
-
-	// circle bow
-	for i := 0; i < S; i++ {
-		t = turn(t, dAlpha)
-		t, vertices = forward(t, s, vertices)
-	}
-
-	// clothoide out
-	for i := 0; i < N; i++ {
-		alpha -= delta
-		t = turn(t, alpha)
-		t, vertices = forward(t, s, vertices)
-	}
-
-	// straight
-	for i := 0; i < M; i++ {
-		t, vertices = forward(t, s, vertices)
-	}
-
-	// clothoide in
-	for i := 0; i < N; i++ {
-		alpha += delta
-		t = turn(t, alpha)
-		t, vertices = forward(t, s, vertices)
-	}
-
-	// circle bow
-	for i := 0; i < S; i++ {
-		t = turn(t, dAlpha)
-		t, vertices = forward(t, s, vertices)
-	}
-
-	// clothoide out
-	for i := 0; i < N; i++ {
-		alpha -= delta
-		t = turn(t, alpha)
-		t, vertices = forward(t, s, vertices)
-	}
-
-	return vertices
 }

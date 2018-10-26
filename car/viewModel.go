@@ -72,13 +72,13 @@ type LineLoops struct {
 func createLines(vertices []float64) Lines {
 	return Lines{
 		Color:    [3]uint8{200, 200, 200},
-		Width:    2.0,
+		Width:    1.0,
 		Vertices: vertices}
 }
 
 func createLineStripes(vertices []float64) LineStripes {
 	return LineStripes{
-		Color:    [3]uint8{128, 64, 255},
+		Color:    [3]uint8{64, 64, 255},
 		Width:    3.0,
 		Vertices: vertices}
 }
@@ -92,8 +92,8 @@ func createLineLoops(vertices []float64) LineLoops {
 
 func createPoints(vertices []float64) Points {
 	return Points{
-		Color:    [3]uint8{64, 64, 255},
-		Width:    7.0,
+		Color:    [3]uint8{0, 0, 0},
+		Width:    2.0,
 		Vertices: vertices}
 }
 
@@ -125,7 +125,6 @@ func (ps *Points) Draw() {
 func (ls *Lines) Draw() {
 
 	gl.LineWidth(float32(ls.Width)) // DIFFERENT
-
 	gl.Color3ub(ls.Color[0], ls.Color[1], ls.Color[2])
 
 	gl.Begin(gl.LINES) // DIFFERENT
@@ -143,7 +142,6 @@ func (ls *Lines) Draw() {
 func (ls *LineStripes) Draw() {
 
 	gl.LineWidth(float32(ls.Width)) // DIFFERENT
-
 	gl.Color3ub(ls.Color[0], ls.Color[1], ls.Color[2])
 
 	gl.Begin(gl.LINE_STRIP) // DIFFERENT
@@ -161,7 +159,6 @@ func (ls *LineStripes) Draw() {
 func (ls *LineLoops) Draw() {
 
 	gl.LineWidth(float32(ls.Width))
-
 	gl.Color3ub(ls.Color[0], ls.Color[1], ls.Color[2])
 
 	gl.Begin(gl.LINE_LOOP)

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/go-gl/glfw/v3.2/glfw"
 )
 
@@ -11,19 +13,22 @@ func createScene() Scene {
 	// http://graphics.stanford.edu/data/3Dscanrep/
 
 	// Create Model
-	ovalTrackVerts := createAnyTrack()
-	normalVectors := calcNormalVectors(ovalTrackVerts)
+	trackVerts := createAnyTrack()
+	radi := calcRadi(trackVerts)
+	factor := 20.0
+
+	normalVectors := calcVectorsWithRadi(trackVerts, radi, factor)
 
 	// Create ViewModels
 	var objects []Drawables
 
-	ovalTrack := createLineLoops(ovalTrackVerts)
+	ovalTrack := createLineStripes(trackVerts)
 	objects = append(objects, &ovalTrack)
 
 	normalVectorLines := createLines(normalVectors)
 	objects = append(objects, &normalVectorLines)
 
-	trackPoints := createPoints(ovalTrackVerts)
+	trackPoints := createPoints(trackVerts)
 	objects = append(objects, &trackPoints)
 
 	// Layer
@@ -61,10 +66,6 @@ func main() {
 	// model := createModel()
 	// viewModel = createViewModel(model)
 
-	// Create Objects
-	//
-	scene = createScene()
-
 	//	glfw.WindowHint(glfw.DEPTH_BITS, 16);
 	//  glfw.WindowHint(glfw.TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
 
@@ -77,6 +78,16 @@ func main() {
 	}
 
 	window.SetKeyCallback(keyCallback) // Controller
+
+	// Create Scene
+	//
+	startTime := glfw.GetTime()
+
+	scene = createScene()
+
+	endTime := glfw.GetTime()
+	deltaTime := endTime - startTime
+	fmt.Printf("create scene took %f seconds \n", deltaTime)
 
 	// Main loop
 	//
