@@ -103,6 +103,90 @@ func calcAlpha(s float64, r float64) float64 {
 	return alpha
 }
 
+func arc(isRight bool, steps int, s float64, k float64, vs []float64, t Turtle) (Turtle, []float64) {
+	for step := 0; step < steps; step++ {
+		t, vs = forward(t, s, vs)
+		if isRight {
+			t = right(t, k)
+		} else {
+			t = left(t, k)
+		}
+	}
+	return t, vs
+}
+
+func clothoide(isRight bool, in bool, steps int, s float64, k float64, vs []float64, t Turtle) (Turtle, []float64) {
+
+	dk := k / float64(steps)
+	ck := 0.0
+
+	if in {
+		ck = 0.0
+	} else {
+		ck = k
+	}
+
+	for step := 0; step < steps; step++ {
+		t, vs = forward(t, s, vs)
+
+		if in {
+			ck = ck + dk
+		} else {
+			ck = ck - dk
+		}
+
+		//fmt.Printf("clothoide ck:%f", ck)
+
+		if isRight {
+			t = right(t, ck)
+		} else {
+			t = left(t, ck)
+		}
+	}
+	return t, vs
+}
+
+func line(steps int, s float64, vs []float64, t Turtle) (Turtle, []float64) {
+	for step := 0; step < steps; step++ {
+		t, vs = forward(t, s, vs)
+	}
+	return t, vs
+}
+
+func createAnyTrack() []float64 {
+
+	vs := createVertices()
+	t := createTurtle()
+
+	x := -20.0 // Start point
+	y := -30.0 // Start point
+	t, vs = moveTo(t, x, y, vs)
+
+	s := 1.0 // Step length 1m
+	k := 2.0 // Krümmung alpha 2 Grad
+
+	as := 125 // Arc segements
+	ls := 55  // Line segments
+	cs := 10  // Clothoide segments
+
+	in := true
+	out := false
+	isRight := true
+	isLeft := false
+
+	//t, vs = arc(isRight, as, s, k, vs, t)
+	//t, vs = clothoide(isRight, out, cs, s, k, vs, t)
+	t, vs = line(ls+1, s, vs, t)
+	t, vs = clothoide(isRight, in, cs, s, k, vs, t)
+	t, vs = arc(isRight, as, s, k, vs, t)
+	t, vs = clothoide(isRight, out, cs, s, k, vs, t)
+	t, vs = line(ls-8, s, vs, t)
+	t, vs = clothoide(isLeft, in, cs, s, k, vs, t)
+	t, vs = arc(isLeft, as, s, k, vs, t)
+
+	return vs
+}
+
 func createOvalTrack2() []float64 {
 
 	x := -40.0
@@ -123,10 +207,6 @@ func createOvalTrack2() []float64 {
 	//
 	// 0° > -80° --> Half circle
 	//
-	for i := 0; i < N; i++ {
-		t, vertices = forward(t, s, vertices)
-		t = right(t, alpha)
-	}
 
 	fmt.Printf("Alpha after circle: %f \n", t.angle)
 

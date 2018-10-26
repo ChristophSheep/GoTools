@@ -38,33 +38,33 @@ func deg(rad float64) float64 {
 	Move to position the turtle at the given coordinates
 	and create the position in vertices
 */
-func moveTo(t Turtle, x float64, y float64, vertices []float64) (Turtle, []float64) {
+func moveTo(t Turtle, x float64, y float64, vs []float64) (Turtle, []float64) {
 
-	vertices = append(vertices, x)
-	vertices = append(vertices, y)
+	vs = append(vs, x)
+	vs = append(vs, y)
 
 	t.x = x
 	t.y = y
 
-	return t, vertices
+	return t, vs
 }
 
 /*
 	Move the turtle the distance d forward
 	and add this new position to the vertices list
 */
-func forward(t Turtle, d float64, vertices []float64) (Turtle, []float64) {
+func forward(t Turtle, d float64, vs []float64) (Turtle, []float64) {
 
 	xn := d*math.Sin(rad(t.angle)) + t.x
 	yn := d*math.Cos(rad(t.angle)) + t.y
 
-	vertices = append(vertices, xn)
-	vertices = append(vertices, yn)
+	vs = append(vs, xn)
+	vs = append(vs, yn)
 
 	t.x = xn
 	t.y = yn
 
-	return t, vertices
+	return t, vs
 }
 
 /*

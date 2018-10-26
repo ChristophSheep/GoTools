@@ -11,7 +11,7 @@ func createScene() Scene {
 	// http://graphics.stanford.edu/data/3Dscanrep/
 
 	// Create Model
-	ovalTrackVerts := createOvalTrack2()
+	ovalTrackVerts := createAnyTrack()
 	normalVectors := calcNormalVectors(ovalTrackVerts)
 
 	// Create ViewModels
@@ -47,11 +47,12 @@ func createScene() Scene {
 // Global TODO: ???
 //
 var (
-	scene Scene
+	scene   Scene
+	windowX int = 800
+	windowY int = 800
 )
 
-// go run calc.go geom.go prim.go main.go
-// go run calc.go geom.go prim.go turtle.go main.go
+// go run turtle.go calc.go model.go controller.go view.go viewModel.go app.go
 
 func main() {
 
@@ -69,7 +70,7 @@ func main() {
 
 	// Init GL, GLFW
 	//
-	window := InitGlAndCreateWindow(700, 700, "gl2d demo")
+	window := InitGlAndCreateWindow(windowX, windowY, "gl2d demo")
 	if window == nil {
 		glfw.Terminate()
 		return

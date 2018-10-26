@@ -1,22 +1,29 @@
 package main // TODO
 
 import (
-	"fmt"
 	"math"
 )
 
-const EPSILON = 0.00001
+// ----------------------------------------------------------------------------
 
-func equals(x, y float64, epsilon float64) bool {
+const N = 2 // Dimension 2 = xy, Dimension 3 = xyz
+
+const EPSILON = 0.00001 // Epsilon for comparing
+
+// ----------------------------------------------------------------------------
+
+func equalsWithEpsilon(x, y float64, epsilon float64) bool {
 	diff := x - y
 	return math.Abs(diff) < epsilon
 }
 
-// calc section of two lines
-//
+/*
+ Calc section of two lines
+ given k, d of line
+*/
 func tryCalcSection(k1, d1, k2, d2 float64) (float64, float64, bool) {
 
-	if equals(k2, k1, EPSILON) {
+	if equalsWithEpsilon(k2, k1, EPSILON) {
 		return 0.0, 0.0, false
 	}
 
@@ -27,8 +34,9 @@ func tryCalcSection(k1, d1, k2, d2 float64) (float64, float64, bool) {
 	return x, y, true
 }
 
-// calc k and d of line from points
-//
+/*
+ Calc k and d of a line from two points
+*/
 func calcLine(x1, y1, x2, y2 float64) (float64, float64) {
 
 	dx := x2 - x1
@@ -41,6 +49,9 @@ func calcLine(x1, y1, x2, y2 float64) (float64, float64) {
 	return k, d
 }
 
+/*
+  Calc middle of a line given by 2 points
+*/
 func calcMiddlePoint(x1, y1, x2, y2 float64) (float64, float64) {
 
 	xm := 0.5 * (x1 + x2)
@@ -49,6 +60,9 @@ func calcMiddlePoint(x1, y1, x2, y2 float64) (float64, float64) {
 	return xm, ym
 }
 
+/*
+  Calc distance of 2 points
+*/
 func calcDistance(x1, y1, x2, y2 float64) float64 {
 
 	xx := (x2 - x1) * (x2 - x1)
@@ -57,6 +71,9 @@ func calcDistance(x1, y1, x2, y2 float64) float64 {
 	return math.Sqrt(xx + yy)
 }
 
+/*
+  Calc normal line (streckensymetrale) of 2 points
+*/
 func calcNormalLine(x1, y1, x2, y2 float64) (float64, float64) {
 
 	dx := x2 - x1
@@ -71,8 +88,9 @@ func calcNormalLine(x1, y1, x2, y2 float64) (float64, float64) {
 	return kn, d
 }
 
-const N = 2 // Dimension 2 = xy, Dimension 3 = xyz
-
+/*
+ Get x y of list of vertices xy xy xy ..
+*/
 func getXY(vertices []float64, n int) (float64, float64) {
 
 	//  For example:
@@ -98,6 +116,9 @@ func getXY(vertices []float64, n int) (float64, float64) {
 	return x, y
 }
 
+/*
+ Calc middle point of 2 lines p1 -> p2, p2 -> p3
+*/
 func tryCalcMiddlePoint(vertices []float64, n int) (float64, float64, bool) {
 
 	// p1
@@ -121,6 +142,9 @@ func tryCalcMiddlePoint(vertices []float64, n int) (float64, float64, bool) {
 	return tryCalcSection(k1, d1, k2, d2)
 }
 
+/*
+ Calc radius of 2 lines
+*/
 func tryCalcRadius(vertices []float64, n int) (float64, bool) {
 
 	xm, ym, ok := tryCalcMiddlePoint(vertices, n)
@@ -136,6 +160,9 @@ func tryCalcRadius(vertices []float64, n int) (float64, bool) {
 	return r, true
 }
 
+/*
+  Calc all radi of a polyline
+*/
 func calcRadi(vertices []float64) []float64 {
 
 	radi := []float64{}
@@ -153,115 +180,4 @@ func calcRadi(vertices []float64) []float64 {
 	return radi
 }
 
-func test1() {
 
-	k1 := 1.0
-	d1 := 0.0
-
-	k2 := -1.0
-	d2 := +2.0
-
-	x, y, ok := tryCalcSection(k1, d1, k2, d2)
-
-	if ok {
-		fmt.Printf("section x:%f y:%f\n", x, y)
-	}
-}
-
-func test2() {
-
-	k1 := 3.0 / 2.0
-	d1 := 0.0
-
-	k2 := -1.0
-	d2 := +2.0
-
-	x, y, ok := tryCalcSection(k1, d1, k2, d2)
-
-	if ok {
-		fmt.Printf("section x:%f y:%f\n", x, y)
-	}
-}
-
-func test3() {
-
-	k1 := 2.0
-	d1 := 1.0
-
-	k2 := +2.0
-	d2 := -1.0
-
-	x, y, ok := tryCalcSection(k1, d1, k2, d2)
-
-	if ok {
-		fmt.Printf("section x:%f y:%f\n", x, y)
-	} else {
-		fmt.Println("no section - lines parallel")
-	}
-}
-
-func test4() {
-
-	vertices := createCircle(0.5, 0.5, 0.5, 8)
-	x, y, ok := tryCalcMiddlePoint(vertices, 1)
-
-	if ok {
-		fmt.Printf("middlepoint x:%f y:%f\n", x, y)
-	} else {
-		fmt.Println("no middlepoint")
-	}
-}
-
-func test5() {
-
-	vertices := []float64{
-		2.0, 7.0,
-		3.0, 4.0,
-		8.0, 3.0}
-
-	x, y, ok := tryCalcMiddlePoint(vertices, 1)
-
-	if ok {
-		fmt.Printf("middlepoint x: %f y: %f", x, y)
-		fmt.Println()
-		r, ok := tryCalcRadius(vertices, 1)
-		if ok {
-			fmt.Printf("radius: %f", r)
-			fmt.Println()
-			fmt.Printf("kruemmung: %f at x: 2.0, y: 7.0", 1/r)
-			fmt.Println()
-			v := 50.0  // m/s = 180 km/h
-			m := 700.0 // kg
-			fg := m * v * v * (1.0 / float64(r))
-			fmt.Printf("Fg: %f kN", fg/1000.0)
-			fmt.Println()
-		}
-
-	} else {
-		fmt.Println("no middlepoint")
-	}
-}
-
-func test6() {
-
-	ovalTrackVerts := createOvalTrack()
-	radi := calcRadi(ovalTrackVerts)
-
-	for n := 0; n < len(radi); n++ {
-		fmt.Printf("n: %d r:%5.3f \n", n, radi[n])
-	}
-}
-
-func tests() {
-
-	/*
-
-		test1()
-		test2()
-		test3()
-		test4()
-		test5()
-
-	*/
-	//test6()
-}
