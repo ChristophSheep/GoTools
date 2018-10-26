@@ -1,4 +1,4 @@
-package model
+package main
 
 /*
 Model create objects of the world
@@ -10,7 +10,7 @@ import (
 	"math"
 )
 
-func newVertices() []float64 {
+func createVertices() []float64 {
 	return []float64{}
 }
 
@@ -109,8 +109,8 @@ func createOvalTrack2() []float64 {
 	y := 0.0
 	s := 1.0
 
-	vertices := newVertices()
-	t := newTurtle()
+	vertices := createVertices()
+	t := createTurtle()
 
 	t, vertices = moveTo(t, x, y, vertices)
 
@@ -180,8 +180,8 @@ func createOvalTrack() []float64 {
 	r := 25.0 // radius of circle in meter
 	s := 1.0  // single segment length in meter
 
-	vertices := newVertices()
-	t := newTurtle()
+	vertices := createVertices()
+	t := createTurtle()
 
 	t, vertices = moveTo(t, -r, -r/2.0, vertices)
 
@@ -198,52 +198,52 @@ func createOvalTrack() []float64 {
 
 	// straight
 	for i := 0; i < M; i++ {
-		t, vertices = move(t, s, vertices)
+		t, vertices = forward(t, s, vertices)
 	}
 
 	// clothoide in
 	for i := 0; i < N; i++ {
 		alpha += delta
 		t = turn(t, alpha)
-		t, vertices = move(t, s, vertices)
+		t, vertices = forward(t, s, vertices)
 	}
 
 	// circle bow
 	for i := 0; i < S; i++ {
 		t = turn(t, dAlpha)
-		t, vertices = move(t, s, vertices)
+		t, vertices = forward(t, s, vertices)
 	}
 
 	// clothoide out
 	for i := 0; i < N; i++ {
 		alpha -= delta
 		t = turn(t, alpha)
-		t, vertices = move(t, s, vertices)
+		t, vertices = forward(t, s, vertices)
 	}
 
 	// straight
 	for i := 0; i < M; i++ {
-		t, vertices = move(t, s, vertices)
+		t, vertices = forward(t, s, vertices)
 	}
 
 	// clothoide in
 	for i := 0; i < N; i++ {
 		alpha += delta
 		t = turn(t, alpha)
-		t, vertices = move(t, s, vertices)
+		t, vertices = forward(t, s, vertices)
 	}
 
 	// circle bow
 	for i := 0; i < S; i++ {
 		t = turn(t, dAlpha)
-		t, vertices = move(t, s, vertices)
+		t, vertices = forward(t, s, vertices)
 	}
 
 	// clothoide out
 	for i := 0; i < N; i++ {
 		alpha -= delta
 		t = turn(t, alpha)
-		t, vertices = move(t, s, vertices)
+		t, vertices = forward(t, s, vertices)
 	}
 
 	return vertices

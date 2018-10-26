@@ -1,4 +1,4 @@
-package view
+package main
 
 /*
 View has to do with openGL.
