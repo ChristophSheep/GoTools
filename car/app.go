@@ -14,6 +14,7 @@ func createScene() Scene {
 
 	// Create Model
 	trackVerts := createAnyTrack()
+
 	radi := calcRadi(trackVerts)
 	factor := 20.0
 

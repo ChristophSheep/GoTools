@@ -61,6 +61,13 @@ func calcMiddlePoint(x1, y1, x2, y2 float64) (float64, float64) {
 }
 
 /*
+  Calc phi of vector vx,vy
+*/
+func calcPhi(vx, vy float64) float64 {
+	return math.Atan(vx / vy)
+}
+
+/*
   Calc distance of 2 points
 */
 func calcDistance(x1, y1, x2, y2 float64) float64 {
@@ -179,5 +186,3 @@ func calcRadi(vertices []float64) []float64 {
 
 	return radi
 }
-
-

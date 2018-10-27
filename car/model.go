@@ -60,6 +60,22 @@ func calcNormal(vx, vy float64) (float64, float64) {
 	return normalize(nx, ny)
 }
 
+func calcDirection(vx1, vy1, vx2, vy2 float64) float64 {
+
+	phi1 := calcPhi(vx1, vy1)
+	phi2 := calcPhi(vx2, vy2)
+
+	dPhi := phi2 - phi1
+
+	direction := -1.0
+
+	if dPhi >= 0.0 {
+		direction = 1.0
+	}
+
+	return direction
+}
+
 func calcVectorsWithRadi(vertices []float64, radi []float64, c float64) []float64 {
 
 	count := len(vertices) / N
@@ -83,6 +99,7 @@ func calcVectorsWithRadi(vertices []float64, radi []float64, c float64) []float6
 
 		x1, y1 := getXY(vertices, n-1)
 		x2, y2 := getXY(vertices, n+0)
+		//x3, y3 := getXY(vertices, n+1)
 
 		//            nx,ny
 		//  x2,y2  ^ ------>
@@ -90,11 +107,15 @@ func calcVectorsWithRadi(vertices []float64, radi []float64, c float64) []float6
 		//         |  vx,vy
 		//  x1,y1  |
 
-		vx, vy := calcVec(x1, y1, x2, y2)
-		nx, ny := calcNormal(vx, vy)
+		vx1, vy1 := calcVec(x1, y1, x2, y2)
+		//vx2, vy2 := calcVec(x2, y2, x3, y3)
 
-		nx *= k * c
-		ny *= k * c
+		//direction := calcDirection(vx1, vy1, vx2, vy2)
+
+		nx, ny := calcNormal(vx1, vy1)
+
+		nx *= k * c //* direction
+		ny *= k * c //* direction
 
 		normals = append(normals, x2)
 		normals = append(normals, y2)
