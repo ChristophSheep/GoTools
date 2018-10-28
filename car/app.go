@@ -15,10 +15,8 @@ func createScene() Scene {
 	// Create Model
 	trackVerts := createAnyTrack()
 
-	radi := calcRadi(trackVerts)
-	factor := 20.0
-
-	normalVectors := calcVectorsWithRadi(trackVerts, radi, factor)
+	scaleFactor := 20.0
+	centrifugalVectors := calcCentrifugalVectors(trackVerts, scaleFactor)
 
 	// Create ViewModels
 	var objects []Drawables
@@ -26,8 +24,8 @@ func createScene() Scene {
 	ovalTrack := createLineStripes(trackVerts)
 	objects = append(objects, &ovalTrack)
 
-	normalVectorLines := createLines(normalVectors)
-	objects = append(objects, &normalVectorLines)
+	centrifugalVectorLines := createLines(centrifugalVectors)
+	objects = append(objects, &centrifugalVectorLines)
 
 	trackPoints := createPoints(trackVerts)
 	objects = append(objects, &trackPoints)

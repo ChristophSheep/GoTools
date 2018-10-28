@@ -6,7 +6,6 @@ It is a model of the virtual world.
 */
 
 import (
-	"fmt"
 	"math"
 )
 
@@ -34,99 +33,39 @@ func createCircle(xm, ym, r float64, sides uint16) []float64 {
 	return vertices
 }
 
-func calcVec(x1, y1, x2, y2 float64) (float64, float64) {
+func calcCentrifugalVectors(vertices []float64, scaleFactor float64) []float64 {
 
-	vx := x2 - x1
-	vy := y2 - y1
+	centrifugalVectors := []float64{}
 
-	return vx, vy
-}
+	_, radi, centrifugalVectors := calcMiddlePointAndRadiAndCentrifugalVectors(vertices)
 
-func normalize(vx, vy float64) (float64, float64) {
-
-	length := math.Sqrt(vx*vx + vy*vy)
-
-	vx = vx / length
-	vy = vy / length
-
-	return vx, vy
-}
-
-func calcNormal(vx, vy float64) (float64, float64) {
-
-	nx := -vy
-	ny := vx
-
-	return normalize(nx, ny)
-}
-
-func calcDirection(vx1, vy1, vx2, vy2 float64) float64 {
-
-	phi1 := calcPhi(vx1, vy1)
-	phi2 := calcPhi(vx2, vy2)
-
-	dPhi := phi2 - phi1
-
-	direction := -1.0
-
-	if dPhi >= 0.0 {
-		direction = 1.0
-	}
-
-	return direction
-}
-
-func calcVectorsWithRadi(vertices []float64, radi []float64, c float64) []float64 {
-
-	count := len(vertices) / N
-
-	normals := []float64{}
+	count := len(centrifugalVectors) / N
 
 	for n := 0; n < count; n++ {
 
-		r := radi[n]
+		radius := radi[n] // radius = inf(1) -> k = 0
+		k := 1.0 / radius
 
-		k := 0.0
-		if r == math.Inf(1) {
-			k = 0.0
-		} else if r == 0.0 {
-			k = 0.0
-		} else {
-			k = 1.0 / r
-		}
+		cvx, cvy := getXY(centrifugalVectors, n)
 
-		fmt.Printf("n: %f , k: %f\n", n, k)
+		// TODO: Fg = m * v^2 * k
 
-		x1, y1 := getXY(vertices, n-1)
-		x2, y2 := getXY(vertices, n+0)
-		//x3, y3 := getXY(vertices, n+1)
+		fgx := cvx * k * scaleFactor
+		fgy := cvy * k * scaleFactor
 
-		//            nx,ny
-		//  x2,y2  ^ ------>
-		//         |
-		//         |  vx,vy
-		//  x1,y1  |
+		xn, yn := getXY(vertices, n)
 
-		vx1, vy1 := calcVec(x1, y1, x2, y2)
-		//vx2, vy2 := calcVec(x2, y2, x3, y3)
+		centrifugalVectors = append(centrifugalVectors, xn)
+		centrifugalVectors = append(centrifugalVectors, yn)
 
-		//direction := calcDirection(vx1, vy1, vx2, vy2)
-
-		nx, ny := calcNormal(vx1, vy1)
-
-		nx *= k * c //* direction
-		ny *= k * c //* direction
-
-		normals = append(normals, x2)
-		normals = append(normals, y2)
-
-		normals = append(normals, x2+nx)
-		normals = append(normals, y2+ny)
+		centrifugalVectors = append(centrifugalVectors, xn+fgx)
+		centrifugalVectors = append(centrifugalVectors, yn+fgy)
 	}
 
-	return normals
+	return centrifugalVectors
 }
 
+/*
 func calcNormalVectors(vertices []float64) []float64 {
 
 	count := len(vertices) / N
@@ -156,7 +95,7 @@ func calcNormalVectors(vertices []float64) []float64 {
 
 	return normals
 }
-
+*/
 func calcAlpha(s float64, r float64) float64 {
 
 	GK := s / 2.0

@@ -96,6 +96,41 @@ func calcNormalLine(x1, y1, x2, y2 float64) (float64, float64) {
 }
 
 /*
+ Calc normal vector of given vector vx vy
+*/
+func calcNormalVector(vx, vy float64) (float64, float64) {
+
+	nx := -vy
+	ny := vx
+
+	return normalize(nx, ny)
+}
+
+/*
+ Calc vector if given two points x1 y1 -> x2 y2
+*/
+func calcVec(x1, y1, x2, y2 float64) (float64, float64) {
+
+	vx := x2 - x1
+	vy := y2 - y1
+
+	return vx, vy
+}
+
+/*
+ Normaize given vector to length 1.0
+*/
+func normalize(vx, vy float64) (float64, float64) {
+
+	length := math.Sqrt(vx*vx + vy*vy)
+
+	vx = vx / length
+	vy = vy / length
+
+	return vx, vy
+}
+
+/*
  Get x y of list of vertices xy xy xy ..
 */
 func getXY(vertices []float64, n int) (float64, float64) {
@@ -165,6 +200,64 @@ func tryCalcRadius(vertices []float64, n int) (float64, bool) {
 	r := calcDistance(xn, yn, xm, ym)
 
 	return r, true
+}
+
+/*
+ Calc middle point of arc or clothoide or line
+	- arc has a middle point and radius
+	- clothoide each segments has middle point
+	- line has a middle point -> infinity
+*/
+func calcMiddlePointAndRadiAndCentrifugalVectors(vertices []float64) ([]float64, []float64, []float64) {
+
+	middlePoints := []float64{}
+	radi := []float64{}
+	centrifugalVectors := []float64{}
+
+	count := len(vertices) / N
+
+	for n := 0; n < count; n++ {
+
+		xl, yl := getXY(vertices, n-1)
+		xn, yn := getXY(vertices, n+0)
+		xu, yu := getXY(vertices, n+1)
+
+		// Strecken Symmetrale
+		// Straight line symetric line
+		//
+		k1, d1 := calcNormalLine(xl, yl, xn, yn) // TODO: Rename "Streckensymmetrale"
+		k2, d2 := calcNormalLine(xn, yn, xu, yu)
+
+		xm, ym, ok := tryCalcSection(k1, d1, k2, d2)
+
+		cvx := 0.0
+		cvy := 0.0
+		r := 0.0
+
+		// if section lines parallel -> r inf, cv are inf
+		//
+		if ok {
+			r = calcDistance(xn, yn, xm, ym)
+			cvx, cvy = normalize(calcVec(xm, ym, xn, yn))
+		} else {
+			xm = math.Inf(1)
+			ym = math.Inf(1)
+			r = math.Inf(1)
+		}
+
+		// TODO: Performance append - faster method
+		// create a array with fixed size and work with foo[i]
+		//
+		middlePoints = append(middlePoints, xm)
+		middlePoints = append(middlePoints, ym)
+
+		radi = append(radi, r)
+
+		centrifugalVectors = append(centrifugalVectors, cvx)
+		centrifugalVectors = append(centrifugalVectors, cvy)
+	}
+
+	return middlePoints, radi, centrifugalVectors
 }
 
 /*
