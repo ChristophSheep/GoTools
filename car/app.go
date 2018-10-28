@@ -15,7 +15,7 @@ func createScene() Scene {
 	// Create Model
 	trackVerts := createAnyTrack()
 
-	scaleFactor := 20.0
+	scaleFactor := 1.0
 	centrifugalVectors := calcCentrifugalVectors(trackVerts, scaleFactor)
 
 	// Create ViewModels
@@ -60,7 +60,7 @@ var (
 
 func main() {
 
-	// tests()
+	tests()
 
 	// model := createModel()
 	// viewModel = createViewModel(model)

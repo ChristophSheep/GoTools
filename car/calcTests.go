@@ -1,4 +1,9 @@
-/*
+package main
+
+import (
+	"fmt"
+)
+
 func test1() {
 
 	k1 := 1.0
@@ -90,22 +95,36 @@ func test5() {
 
 func test6() {
 
-	ovalTrackVerts := createOvalTrack()
-	radi := calcRadi(ovalTrackVerts)
+	x1 := 0.0
+	y1 := 0.0
+	x2 := 0.0
+	y2 := 1.0
 
-	for n := 0; n < len(radi); n++ {
-		fmt.Printf("n: %d r:%5.3f \n", n, radi[n])
-	}
+	k, d := calcLineSymetrale(x1, y1, x2, y2)
+
+	fmt.Printf("k: %f, d: %f \n", k, d)
+}
+
+func test7() {
+
+	x1 := 0.5
+	y1 := 2.5
+	x2 := 1.5
+	y2 := 0.5
+
+	k, d := calcLineSymetrale(x1, y1, x2, y2)
+
+	fmt.Printf("k: %f, d: %f \n", k, d)
 }
 
 func tests() {
 
-	test1()
-	test2()
-	test3()
-	test4()
-	test5()
-	test6()
+	/*
+		test1()
+		test2()
+		test3()
+		test4()
+		test5()*/
+	//test6()
+	test7()
 }
-
-*/

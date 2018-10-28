@@ -1,6 +1,7 @@
 package main // TODO
 
 import (
+	"fmt"
 	"math"
 )
 
@@ -81,7 +82,7 @@ func calcDistance(x1, y1, x2, y2 float64) float64 {
 /*
   Calc normal line (streckensymetrale) of 2 points
 */
-func calcNormalLine(x1, y1, x2, y2 float64) (float64, float64) {
+func calcLineSymetrale(x1, y1, x2, y2 float64) (float64, float64) {
 
 	dx := x2 - x1
 	dy := y2 - y1
@@ -178,8 +179,8 @@ func tryCalcMiddlePoint(vertices []float64, n int) (float64, float64, bool) {
 	xn, yn := getXY(vertices, n+0)
 	xm, ym := getXY(vertices, n+1)
 
-	k1, d1 := calcNormalLine(xl, yl, xn, yn)
-	k2, d2 := calcNormalLine(xn, yn, xm, ym)
+	k1, d1 := calcLineSymetrale(xl, yl, xn, yn)
+	k2, d2 := calcLineSymetrale(xn, yn, xm, ym)
 
 	return tryCalcSection(k1, d1, k2, d2)
 }
@@ -225,10 +226,12 @@ func calcMiddlePointAndRadiAndCentrifugalVectors(vertices []float64) ([]float64,
 		// Strecken Symmetrale
 		// Straight line symetric line
 		//
-		k1, d1 := calcNormalLine(xl, yl, xn, yn) // TODO: Rename "Streckensymmetrale"
-		k2, d2 := calcNormalLine(xn, yn, xu, yu)
+		k1, d1 := calcLineSymetrale(xl, yl, xn, yn) // TODO: Rename "Streckensymmetrale"
+		k2, d2 := calcLineSymetrale(xn, yn, xu, yu)
 
 		xm, ym, ok := tryCalcSection(k1, d1, k2, d2)
+
+		fmt.Printf("n: %d - xm: %f, ym: %f \n", n, xm, ym)
 
 		cvx := 0.0
 		cvy := 0.0
@@ -238,7 +241,11 @@ func calcMiddlePointAndRadiAndCentrifugalVectors(vertices []float64) ([]float64,
 		//
 		if ok {
 			r = calcDistance(xn, yn, xm, ym)
-			cvx, cvy = normalize(calcVec(xm, ym, xn, yn))
+			//cvx, cvy = normalize(calcVec(xm, ym, xn, yn))
+			cvx, cvy = calcVec(xn, yn, xm, ym)
+
+			fmt.Printf("n: %d - cvx: %f, cvy: %f \n", n, cvx, cvy)
+
 		} else {
 			xm = math.Inf(1)
 			ym = math.Inf(1)
