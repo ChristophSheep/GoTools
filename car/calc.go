@@ -146,6 +146,13 @@ func normalize(vx, vy float64) (float64, float64) {
 }
 
 /*
+ Scale vector with factor x and y
+*/
+func scale(vx, vy, scaleX, scaleY float64) (float64, float64) {
+	return vx * scaleX, vy * scaleY
+}
+
+/*
  Get x y of list of vertices xy xy xy ..
 */
 func getXY(vertices []float64, n int) (float64, float64) {
@@ -223,7 +230,7 @@ func tryCalcRadius(vertices []float64, n int) (float64, bool) {
 	- clothoide each segments has middle point
 	- line has a middle point -> infinity
 */
-func calcMiddlePointAndRadiAndCentrifugalVectors(vertices []float64) ([]float64, []float64, []float64) {
+func calcMiddlePointAndRadiAndVectors(vertices []float64) ([]float64, []float64, []float64) {
 
 	middlePoints := []float64{}
 	radi := []float64{}

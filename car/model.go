@@ -37,34 +37,37 @@ func calcCentrifugalVectors(vertices []float64, scaleFactor float64) []float64 {
 
 	result := []float64{}
 
-	_, _, centrifugalVectors := calcMiddlePointAndRadiAndCentrifugalVectors(vertices)
+	_, radi, vectors := calcMiddlePointAndRadiAndVectors(vertices)
 
-	count := len(centrifugalVectors) / N
+	count := len(vectors) / N
 
 	for n := 0; n < count; n++ {
 
-		//radius := radi[n] // radius = inf(1) -> k = 0
-		// fmt.Printf("n: %d  - Radius: %f \n", n, radius)
+		radius := radi[n] // radius = inf(1) -> k = 0
+		k := 1.0 / radius
 
-		//xm, ym := getXY(middlePoints, n)
-		// fmt.Printf("xm: %f, ym: %f \n", xm, ym)
+		vx, vy := getXY(vectors, n)
 
-		//k := 1.0 / radius
+		// Centrifugal vectors
+		vx *= -1.0
+		vy *= -1.0
 
-		cvx, cvy := getXY(centrifugalVectors, n)
-
+		//
 		// TODO: Fg = m * v^2 * k
+		//
+		scaleX := k * scaleFactor
+		scaleY := scaleX
 
-		//fgx := cvx * k * scaleFactor
-		//fgy := cvy * k * scaleFactor
+		vx, vy = normalize(vx, vy)
+		vx, vy = scale(vx, vy, scaleX, scaleY)
 
 		xn, yn := getXY(vertices, n)
 
 		result = append(result, xn)
 		result = append(result, yn)
 
-		result = append(result, xn+cvx)
-		result = append(result, yn+cvy)
+		result = append(result, xn+vx)
+		result = append(result, yn+vy)
 	}
 
 	return result
