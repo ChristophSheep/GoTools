@@ -24,21 +24,20 @@ func createScene() Scene {
 	centrifugalVectors := calcCentrifugalVectors(trackVerts, scaleFactor)
 
 	// Create ViewModels
-	var objects []Drawables
 
 	ovalTrack := createLineStripe(trackVerts)
-	objects = append(objects, &ovalTrack)
+	layer1.objects = append(layer1.objects, &ovalTrack)
 
 	centrifugalVectorLines := createLines(centrifugalVectors)
-	objects = append(objects, &centrifugalVectorLines)
+	layer1.objects = append(layer1.objects, &centrifugalVectorLines)
 
 	trackPoints := createPoints(trackVerts)
-	objects = append(objects, &trackPoints)
+	layer1.objects = append(layer1.objects, &trackPoints)
+
+	// Track Area
 
 	trackWidth := 8.0 // m
 	trackAreaVerts := createTrackArea(trackVerts, trackWidth)
-
-	layer1.objects = objects
 
 	trackAreaQuads := createQuadStrip(trackAreaVerts)
 	layer0.objects = append(layer0.objects, &trackAreaQuads)
@@ -53,6 +52,13 @@ func createScene() Scene {
 	idealLine.Color = [3]uint8{64, 255, 64}
 
 	layer2.objects = append(layer2.objects, &idealLine)
+
+	//scaleFactor := 50.0
+	centrifugalVectorsIL := calcCentrifugalVectors(idealLineVerts, scaleFactor)
+
+	centrifugalVectorLinesIL := createLines(centrifugalVectorsIL)
+	centrifugalVectorLinesIL.Color = [3]uint8{128, 255, 128}
+	layer2.objects = append(layer2.objects, &centrifugalVectorLinesIL)
 
 	// Camera
 	camera := Camera{}
