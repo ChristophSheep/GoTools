@@ -288,6 +288,47 @@ func createAnyTrack() []float64 {
 	return vs
 }
 
+func createAnyTrackIdealLine() []float64 {
+
+	t, vs := createTurtleVerts()
+
+	x := -24.0 // Start point
+	y := -10.0 // Start point
+	t, vs = moveTo(t, x, y, vs)
+
+	s := 1.0 // s .. step length 1m
+	k := 4.0 // k .. krümmung alpha 2 Grad after s 1m
+
+	t, vs = line(5, s, vs, t)
+	t, vs = clothoide(15, s, RIGHT, IN, k, vs, t)
+	t, vs = arc(23, s, RIGHT, k, vs, t)
+	t, vs = clothoide(5, s, RIGHT, OUT, k, vs, t)
+	t, vs = line(7, s, vs, t)
+	t, vs = clothoide(5, s, LEFT, IN, k, vs, t)
+	t, vs = arc(63, s, LEFT, k-0.6, vs, t)
+	t, vs = clothoide(5, s, LEFT, OUT, k, vs, t)
+	t, vs = line(38, s, vs, t)
+	t, vs = clothoide(5, s, LEFT, IN, k, vs, t)
+	t, vs = arc(15, s, LEFT, k-0.5, vs, t)
+	t, vs = clothoide(5, s, LEFT, OUT, k, vs, t)
+	t, vs = line(33, s, vs, t)
+	/*	t, vs = clothoide(5, s, LEFT, IN, k+2, vs, t)
+		t, vs = arc(10, s, LEFT, k+2, vs, t)
+		t, vs = clothoide(5, s, LEFT, OUT, k+2, vs, t)
+		t, vs = line(30, s, vs, t)
+		t, vs = clothoide(5, s, LEFT, IN, k+4, vs, t)
+		t, vs = arc(18, s, LEFT, k+4, vs, t)
+		t, vs = clothoide(5, s, LEFT, OUT, k+4, vs, t)
+		t, vs = line(13, s, vs, t)
+		t, vs = clothoide(5, s, RIGHT, IN, k+6, vs, t)
+		t, vs = arc(4, s, RIGHT, k+6, vs, t)
+		t, vs = clothoide(5, s, RIGHT, OUT, k+6, vs, t)
+		t, vs = line(5, s, vs, t)
+	*/
+
+	return vs
+}
+
 func createEightTrack() []float64 {
 
 	vs := createVertices()

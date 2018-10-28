@@ -15,6 +15,7 @@ func createScene() Scene {
 	// Layers
 	layer0 := Layer{}
 	layer1 := Layer{}
+	layer2 := Layer{}
 
 	// Create Model
 	trackVerts := createAnyTrack()
@@ -25,7 +26,7 @@ func createScene() Scene {
 	// Create ViewModels
 	var objects []Drawables
 
-	ovalTrack := createLineStripes(trackVerts)
+	ovalTrack := createLineStripe(trackVerts)
 	objects = append(objects, &ovalTrack)
 
 	centrifugalVectorLines := createLines(centrifugalVectors)
@@ -37,13 +38,21 @@ func createScene() Scene {
 	trackWidth := 8.0 // m
 	trackAreaVerts := createTrackArea(trackVerts, trackWidth)
 
+	layer1.objects = objects
+
 	trackAreaQuads := createQuadStrip(trackAreaVerts)
 	layer0.objects = append(layer0.objects, &trackAreaQuads)
 
 	trackAreaPoints := createPoints(trackAreaVerts)
 	layer0.objects = append(layer0.objects, &trackAreaPoints)
 
-	layer1.objects = objects
+	// Ideal line
+
+	idealLineVerts := createAnyTrackIdealLine()
+	idealLine := createLineStripe(idealLineVerts)
+	idealLine.Color = [3]uint8{64, 255, 64}
+
+	layer2.objects = append(layer2.objects, &idealLine)
 
 	// Camera
 	camera := Camera{}
@@ -56,6 +65,7 @@ func createScene() Scene {
 
 	scene.layers = append(scene.layers, layer0)
 	scene.layers = append(scene.layers, layer1)
+	scene.layers = append(scene.layers, layer2)
 
 	scene.camera = camera
 

@@ -53,7 +53,7 @@ type Lines struct {
 	Vertices []float64
 }
 
-type LineStripes struct {
+type LineStripe struct {
 	Color    [3]uint8
 	Width    float64
 	Vertices []float64
@@ -82,8 +82,8 @@ func createLines(vertices []float64) Lines {
 		Vertices: vertices}
 }
 
-func createLineStripes(vertices []float64) LineStripes {
-	return LineStripes{
+func createLineStripe(vertices []float64) LineStripe {
+	return LineStripe{
 		Color:    [3]uint8{64, 64, 255},
 		Width:    3.0,
 		Vertices: vertices}
@@ -174,9 +174,9 @@ func (ls *Lines) Draw() {
 }
 
 /*
-	LineStripes
+	LineStripe
 */
-func (ls *LineStripes) Draw() {
+func (ls *LineStripe) Draw() {
 
 	gl.LineWidth(float32(ls.Width)) // DIFFERENT
 	gl.Color3ub(ls.Color[0], ls.Color[1], ls.Color[2])
