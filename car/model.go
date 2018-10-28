@@ -6,6 +6,7 @@ It is a model of the virtual world.
 */
 
 import (
+	"fmt"
 	"math"
 )
 
@@ -33,6 +34,48 @@ func createCircle(xm, ym, r float64, sides uint16) []float64 {
 	return vertices
 }
 
+func createTrackArea(vertices []float64, width float64) []float64 {
+
+	areaVertices := []float64{}
+
+	//  lx,ly                rx,ry
+	//  -----                -----
+	//              |
+	//   p4 --------+-------- p5
+	// 	  		    |
+	//   p2 --------+-------- p3
+	// 			    |
+	//   p0 --------+-------- p1
+	//     		    |
+
+	halfWidth := width / 2.0
+	nvectors := calcNormalVectors(vertices)
+	count := len(nvectors) / N
+
+	for n := 0; n < count; n++ {
+
+		vx, vy := getXY(nvectors, n)
+
+		fmt.Printf("n: %d, vx: %f,  vy: %f \n", n, vx, vy)
+
+		xn, yn := getXY(vertices, n)
+
+		rx := vx * halfWidth
+		ry := vy * halfWidth
+
+		lx := -1.0 * vx * halfWidth
+		ly := -1.0 * vy * halfWidth
+
+		areaVertices = append(areaVertices, xn+lx)
+		areaVertices = append(areaVertices, yn+ly)
+
+		areaVertices = append(areaVertices, xn+rx)
+		areaVertices = append(areaVertices, yn+ry)
+
+	}
+	return areaVertices
+}
+
 func calcCentrifugalVectors(vertices []float64, scaleFactor float64) []float64 {
 
 	result := []float64{}
@@ -49,6 +92,7 @@ func calcCentrifugalVectors(vertices []float64, scaleFactor float64) []float64 {
 		vx, vy := getXY(vectors, n)
 
 		// Centrifugal vectors
+		// are opposite to vector from point to (arc) middle point
 		vx *= -1.0
 		vy *= -1.0
 
@@ -73,7 +117,6 @@ func calcCentrifugalVectors(vertices []float64, scaleFactor float64) []float64 {
 	return result
 }
 
-/*
 func calcNormalVectors(vertices []float64) []float64 {
 
 	count := len(vertices) / N
@@ -92,18 +135,21 @@ func calcNormalVectors(vertices []float64) []float64 {
 		//  x1,y1  |
 
 		vx, vy := calcVec(x1, y1, x2, y2)
-		nx, ny := calcNormal(vx, vy)
+		nx, ny := calcNormalVector(vx, vy)
 
-		normals = append(normals, x2)
-		normals = append(normals, y2)
+		normals = append(normals, nx)
+		normals = append(normals, ny)
 
-		normals = append(normals, x2+nx)
-		normals = append(normals, y2+ny)
+		//normals = append(normals, x2)
+		//normals = append(normals, y2)
+
+		//normals = append(normals, x2+nx)
+		//normals = append(normals, y2+ny)
 	}
 
 	return normals
 }
-*/
+
 func calcAlpha(s float64, r float64) float64 {
 
 	GK := s / 2.0
@@ -214,7 +260,7 @@ func createAnyTrack() []float64 {
 	s := 1.0 // s .. step length 1m
 	k := 4.0 // k .. krümmung alpha 2 Grad after s 1m
 
-	t, vs = line(10, s, vs, t)
+	t, vs = line(5, s, vs, t)
 	t, vs = clothoide(15, s, RIGHT, IN, k, vs, t)
 	t, vs = arc(25, s, RIGHT, k, vs, t)
 	t, vs = clothoide(5, s, RIGHT, OUT, k, vs, t)
@@ -237,6 +283,7 @@ func createAnyTrack() []float64 {
 	t, vs = clothoide(5, s, RIGHT, IN, k+6, vs, t)
 	t, vs = arc(4, s, RIGHT, k+6, vs, t)
 	t, vs = clothoide(5, s, RIGHT, OUT, k+6, vs, t)
+	t, vs = line(5, s, vs, t)
 
 	return vs
 }

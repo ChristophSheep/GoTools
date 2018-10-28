@@ -65,6 +65,12 @@ type LineLoops struct {
 	Vertices []float64
 }
 
+type QuadStrip struct {
+	Color    [3]uint8
+	Width    float64
+	Vertices []float64 // xl,yl ---- xr,yr
+}
+
 // ----------------------------------------------------------------------------
 // Creator functions
 // ----------------------------------------------------------------------------
@@ -83,6 +89,13 @@ func createLineStripes(vertices []float64) LineStripes {
 		Vertices: vertices}
 }
 
+func createQuadStrip(vertices []float64) QuadStrip {
+	return QuadStrip{
+		Color:    [3]uint8{32, 32, 32},
+		Width:    1.0,
+		Vertices: vertices}
+}
+
 func createLineLoops(vertices []float64) LineLoops {
 	return LineLoops{
 		Color:    [3]uint8{255, 255, 128},
@@ -92,7 +105,7 @@ func createLineLoops(vertices []float64) LineLoops {
 
 func createPoints(vertices []float64) Points {
 	return Points{
-		Color:    [3]uint8{0, 0, 0},
+		Color:    [3]uint8{255, 0, 0},
 		Width:    2.0,
 		Vertices: vertices}
 }
@@ -116,6 +129,30 @@ func (ps *Points) Draw() {
 		y := ps.Vertices[i+1]
 		gl.Vertex2d(x, y)
 	}
+	gl.End()
+}
+
+/*
+	Quadstrip
+*/
+func (ps *QuadStrip) Draw() {
+
+	//gl.PointLineWidth(float32(ps.Width)) // DIFFERENT
+
+	gl.Color3ub(ps.Color[0], ps.Color[1], ps.Color[2])
+
+	gl.Begin(gl.QUAD_STRIP) // DIFFERENT
+
+	for i := 0; i < len(ps.Vertices); i = i + (2 * N) {
+		xl := ps.Vertices[i+0]
+		yl := ps.Vertices[i+1]
+		gl.Vertex2d(xl, yl)
+
+		xr := ps.Vertices[i+2]
+		yr := ps.Vertices[i+3]
+		gl.Vertex2d(xr, yr)
+	}
+
 	gl.End()
 }
 

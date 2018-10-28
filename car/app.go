@@ -12,6 +12,10 @@ func createScene() Scene {
 	//
 	// http://graphics.stanford.edu/data/3Dscanrep/
 
+	// Layers
+	layer0 := Layer{}
+	layer1 := Layer{}
+
 	// Create Model
 	trackVerts := createAnyTrack()
 
@@ -30,9 +34,16 @@ func createScene() Scene {
 	trackPoints := createPoints(trackVerts)
 	objects = append(objects, &trackPoints)
 
-	// Layer
-	layer := Layer{}
-	layer.objects = objects
+	trackWidth := 8.0 // m
+	trackAreaVerts := createTrackArea(trackVerts, trackWidth)
+
+	trackAreaQuads := createQuadStrip(trackAreaVerts)
+	layer0.objects = append(layer0.objects, &trackAreaQuads)
+
+	trackAreaPoints := createPoints(trackAreaVerts)
+	layer0.objects = append(layer0.objects, &trackAreaPoints)
+
+	layer1.objects = objects
 
 	// Camera
 	camera := Camera{}
@@ -42,7 +53,10 @@ func createScene() Scene {
 
 	// Scene
 	scene := Scene{}
-	scene.layers = append(scene.layers, layer)
+
+	scene.layers = append(scene.layers, layer0)
+	scene.layers = append(scene.layers, layer1)
+
 	scene.camera = camera
 
 	return scene
