@@ -6,7 +6,6 @@ It is a model of the virtual world.
 */
 
 import (
-	"fmt"
 	"math"
 )
 
@@ -36,19 +35,19 @@ func createCircle(xm, ym, r float64, sides uint16) []float64 {
 
 func calcCentrifugalVectors(vertices []float64, scaleFactor float64) []float64 {
 
-	centrifugalVectors := []float64{}
+	result := []float64{}
 
-	middlePoints, radi, centrifugalVectors := calcMiddlePointAndRadiAndCentrifugalVectors(vertices)
+	_, _, centrifugalVectors := calcMiddlePointAndRadiAndCentrifugalVectors(vertices)
 
 	count := len(centrifugalVectors) / N
 
 	for n := 0; n < count; n++ {
 
-		radius := radi[n] // radius = inf(1) -> k = 0
-		fmt.Printf("n: %d  - Radius: %f \n", n, radius)
+		//radius := radi[n] // radius = inf(1) -> k = 0
+		// fmt.Printf("n: %d  - Radius: %f \n", n, radius)
 
-		xm, ym := getXY(middlePoints, n)
-		fmt.Printf("xm: %f, ym: %f \n", xm, ym)
+		//xm, ym := getXY(middlePoints, n)
+		// fmt.Printf("xm: %f, ym: %f \n", xm, ym)
 
 		//k := 1.0 / radius
 
@@ -61,14 +60,14 @@ func calcCentrifugalVectors(vertices []float64, scaleFactor float64) []float64 {
 
 		xn, yn := getXY(vertices, n)
 
-		centrifugalVectors = append(centrifugalVectors, xn)
-		centrifugalVectors = append(centrifugalVectors, yn)
+		result = append(result, xn)
+		result = append(result, yn)
 
-		centrifugalVectors = append(centrifugalVectors, xn+cvx)
-		centrifugalVectors = append(centrifugalVectors, yn+cvy)
+		result = append(result, xn+cvx)
+		result = append(result, yn+cvy)
 	}
 
-	return centrifugalVectors
+	return result
 }
 
 /*
@@ -184,7 +183,7 @@ func createTurtleVerts() (Turtle, []float64) {
 	return t, vs
 }
 
-func createAnyTrack() []float64 {
+func createAnyTrackSmall() []float64 {
 
 	t, vs := createTurtleVerts()
 
@@ -201,7 +200,7 @@ func createAnyTrack() []float64 {
 	return vs
 }
 
-func createAnyTrackBig() []float64 {
+func createAnyTrack() []float64 {
 
 	t, vs := createTurtleVerts()
 

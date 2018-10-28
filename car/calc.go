@@ -1,7 +1,6 @@
 package main // TODO
 
 import (
-	"fmt"
 	"math"
 )
 
@@ -24,13 +23,28 @@ func equalsWithEpsilon(x, y float64, epsilon float64) bool {
 */
 func tryCalcSection(k1, d1, k2, d2 float64) (float64, float64, bool) {
 
+	// Check if lines parallel
+
 	if equalsWithEpsilon(k2, k1, EPSILON) {
-		return 0.0, 0.0, false
+		return math.Inf(1), math.Inf(1), false
 	}
 
+	// TODO: one line is vertical
+	//
+	//
+	//    | k = inf
+	// ---+---- k = 0
+	//    |
+	//
+
 	divisor := k2 - k1
+
 	y := (k2*d1 - k1*d2) / divisor
 	x := (y - d2) / k2
+
+	if k2 == 0.0 {
+		x = (y - d1) / k1
+	}
 
 	return x, y, true
 }
@@ -231,7 +245,7 @@ func calcMiddlePointAndRadiAndCentrifugalVectors(vertices []float64) ([]float64,
 
 		xm, ym, ok := tryCalcSection(k1, d1, k2, d2)
 
-		fmt.Printf("n: %d - xm: %f, ym: %f \n", n, xm, ym)
+		//fmt.Printf("n: %d - xm: %f, ym: %f \n", n, xm, ym)
 
 		cvx := 0.0
 		cvy := 0.0
@@ -244,7 +258,7 @@ func calcMiddlePointAndRadiAndCentrifugalVectors(vertices []float64) ([]float64,
 			//cvx, cvy = normalize(calcVec(xm, ym, xn, yn))
 			cvx, cvy = calcVec(xn, yn, xm, ym)
 
-			fmt.Printf("n: %d - cvx: %f, cvy: %f \n", n, cvx, cvy)
+			//fmt.Printf("n: %d - cvx: %f, cvy: %f \n", n, cvx, cvy)
 
 		} else {
 			xm = math.Inf(1)

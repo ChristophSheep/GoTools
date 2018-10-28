@@ -56,17 +56,12 @@ var (
 	windowY int = 800
 )
 
-// go run turtle.go calc.go model.go controller.go view.go viewModel.go app.go
+// go run turtle.go calc.go calcTests.go model.go controller.go view.go viewModel.go app.go
 
 func main() {
 
+	// TODO: if tests OK start else ERROR do'nt start
 	tests()
-
-	// model := createModel()
-	// viewModel = createViewModel(model)
-
-	//	glfw.WindowHint(glfw.DEPTH_BITS, 16);
-	//  glfw.WindowHint(glfw.TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
 
 	// Init GL, GLFW
 	//
