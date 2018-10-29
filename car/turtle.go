@@ -89,3 +89,49 @@ func turn(t Turtle, delta float64) Turtle {
 	t.angle += delta
 	return t
 }
+
+// ----------------------------------------------------------------------------
+// Turtle to create v curve for speed
+//
+
+type TurtleV struct {
+	s float64 // current position in meter
+	a float64 // current acceleration km/h per meter
+	v float64 // current velocity km/h
+}
+
+func createTurtleV() TurtleV {
+	return TurtleV{
+		s: 0.0,
+		a: 0.0,
+		v: 0.0}
+}
+
+func setAbsolute(t TurtleV, s, a, v float64) TurtleV {
+	t.s = s
+	t.a = a
+	t.v = v
+	return t
+}
+
+func setAcceleration(t TurtleV, a float64) TurtleV {
+	t.a = a
+	return t
+}
+
+func drive(t TurtleV, s float64, vv []float64) (TurtleV, []float64) {
+
+	vn := t.a * s
+	sn := t.s + s
+
+	// TODO: position, interpolation ??
+	// Current with a resolution of a meter you have velocity data
+	//vv = append(vv, sn)
+
+	vv = append(vv, vn)
+
+	t.v = vn
+	t.s = sn
+
+	return t, vv
+}

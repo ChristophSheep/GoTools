@@ -18,10 +18,10 @@ func createScene() Scene {
 	layer2 := Layer{}
 
 	// Create Model
-	trackVerts := createAnyTrack()
+	trackVerts, velocityData := createAnyTrack()
 
-	scaleFactor := 50.0
-	centrifugalVectors := calcCentrifugalVectors(trackVerts, scaleFactor)
+	scaleFactor := 1.0
+	centrifugalVectors := calcCentrifugalVectors(trackVerts, velocityData, scaleFactor)
 
 	// Create ViewModels
 
@@ -38,24 +38,20 @@ func createScene() Scene {
 
 	trackWidth := 8.0 // m
 	trackAreaVerts := createTrackArea(trackVerts, trackWidth)
-
 	trackAreaQuads := createQuadStrip(trackAreaVerts)
 	layer0.objects = append(layer0.objects, &trackAreaQuads)
 
 	trackAreaPoints := createPoints(trackAreaVerts)
 	layer0.objects = append(layer0.objects, &trackAreaPoints)
 
-	// Ideal line
+	// Example ideal line
 
 	idealLineVerts := createAnyTrackIdealLine()
 	idealLine := createLineStripe(idealLineVerts)
 	idealLine.Color = [3]uint8{64, 255, 64}
-
 	layer2.objects = append(layer2.objects, &idealLine)
 
-	//scaleFactor := 50.0
-	centrifugalVectorsIL := calcCentrifugalVectors(idealLineVerts, scaleFactor)
-
+	centrifugalVectorsIL := calcCentrifugalVectors(idealLineVerts, velocityData, scaleFactor)
 	centrifugalVectorLinesIL := createLines(centrifugalVectorsIL)
 	centrifugalVectorLinesIL.Color = [3]uint8{128, 255, 128}
 	layer2.objects = append(layer2.objects, &centrifugalVectorLinesIL)

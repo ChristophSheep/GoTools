@@ -56,7 +56,7 @@ func createTrackArea(vertices []float64, width float64) []float64 {
 
 		vx, vy := getXY(nvectors, n)
 
-		fmt.Printf("n: %d, vx: %f,  vy: %f \n", n, vx, vy)
+		//fmt.Printf("n: %d, vx: %f,  vy: %f \n", n, vx, vy)
 
 		xn, yn := getXY(vertices, n)
 
@@ -76,18 +76,24 @@ func createTrackArea(vertices []float64, width float64) []float64 {
 	return areaVertices
 }
 
-func calcCentrifugalVectors(vertices []float64, scaleFactor float64) []float64 {
+func calcCentrifugalVectors(vertices []float64, velocityData []float64, scaleFactor float64) []float64 {
 
 	result := []float64{}
 
-	_, radi, vectors := calcMiddlePointAndRadiAndVectors(vertices)
+	//_, radi, vectors := calcMiddlePointAndRadiAndVectors(vertices)
+
+	_, _, vectors := calcMiddlePointAndRadiAndVectors(vertices)
 
 	count := len(vectors) / N
 
 	for n := 0; n < count; n++ {
 
-		radius := radi[n] // radius = inf(1) -> k = 0
-		k := 1.0 / radius
+		velocity := 0.0 // unit factor
+		if n < len(velocityData) {
+			velocity = velocityData[n]
+			fmt.Printf("n: %d, velocity: %f \n", n, velocity)
+
+		}
 
 		vx, vy := getXY(vectors, n)
 
@@ -99,8 +105,21 @@ func calcCentrifugalVectors(vertices []float64, scaleFactor float64) []float64 {
 		//
 		// TODO: Fg = m * v^2 * k
 		//
-		scaleX := k * scaleFactor
-		scaleY := scaleX
+		/*
+			radius := radi[n] // radius = inf(1) -> k = 0
+				k := 1.0 / radius
+
+				m := 1.0
+
+					// TODO: ONLY SHOW SPEED
+					Fg := m * velocity * velocity * k
+
+					scaleX := Fg * scaleFactor
+					scaleY := Fg * scaleFactor
+		*/
+
+		scaleX := velocity * scaleFactor
+		scaleY := velocity * scaleFactor
 
 		vx, vy = normalize(vx, vy)
 		vx, vy = scale(vx, vy, scaleX, scaleY)
@@ -226,10 +245,32 @@ func line(steps int, s float64, vs []float64, t Turtle) (Turtle, []float64) {
 	return t, vs
 }
 
+func _speedUp_(steps int, s float64, a float64, vv []float64, tv TurtleV) (TurtleV, []float64) {
+	tv = setAcceleration(tv, a)
+	for step := 0; step < steps; step++ {
+		tv, vv = drive(tv, s, vv)
+	}
+	return tv, vv
+}
+
+func _breakDown_(steps int, s float64, a float64, vv []float64, tv TurtleV) (TurtleV, []float64) {
+	tv = setAcceleration(tv, -a)
+	for step := 0; step < steps; step++ {
+		tv, vv = drive(tv, s, vv)
+	}
+	return tv, vv
+}
+
 func createTurtleVerts() (Turtle, []float64) {
 	vs := createVertices()
 	t := createTurtle()
 	return t, vs
+}
+
+func createTurtleVData() (TurtleV, []float64) {
+	vs := []float64{}
+	tv := createTurtleV()
+	return tv, vs
 }
 
 func createAnyTrackSmall() []float64 {
@@ -249,9 +290,16 @@ func createAnyTrackSmall() []float64 {
 	return vs
 }
 
-func createAnyTrack() []float64 {
+func createAnyTrack() ([]float64, []float64) {
 
 	t, vs := createTurtleVerts()
+	tv, vv := createTurtleVData()
+
+	s0 := 0.0   // meter
+	v0 := 250.0 // km/h
+	a := 5.0    // acceleration km/h per meter
+	b := 10.0   // break km/h per meter
+	tv = setAbsolute(tv, s0, a, v0)
 
 	x := -20.0 // Start point
 	y := -10.0 // Start point
@@ -260,7 +308,12 @@ func createAnyTrack() []float64 {
 	s := 1.0 // s .. step length 1m
 	k := 4.0 // k .. krümmung alpha 2 Grad after s 1m
 
+	tv, vv = _speedUp_(6, s, a, vv, tv)
+
 	t, vs = line(5, s, vs, t)
+
+	tv, vv = _breakDown_(10, s, b, vv, tv)
+
 	t, vs = clothoide(15, s, RIGHT, IN, k, vs, t)
 	t, vs = arc(25, s, RIGHT, k, vs, t)
 	t, vs = clothoide(5, s, RIGHT, OUT, k, vs, t)
@@ -285,7 +338,7 @@ func createAnyTrack() []float64 {
 	t, vs = clothoide(5, s, RIGHT, OUT, k+6, vs, t)
 	t, vs = line(5, s, vs, t)
 
-	return vs
+	return vs, vv
 }
 
 func createAnyTrackIdealLine() []float64 {
