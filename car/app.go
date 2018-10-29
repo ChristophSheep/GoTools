@@ -18,10 +18,14 @@ func createScene() Scene {
 	layer2 := Layer{}
 
 	// Create Model
+
 	trackVerts, velocityData := createAnyTrack()
 
-	scaleFactor := 1.0
-	centrifugalVectors := calcCentrifugalVectors(trackVerts, velocityData, scaleFactor)
+	scaleFactorCentrifugal := 5.0 / 1000.0
+	scaleFactorVelocity := 2.0 / 100.0
+
+	centrifugalVectors := calcCentrifugalVectors(trackVerts, velocityData, scaleFactorCentrifugal)
+	veloctiyVectors := calcVelocityVectors(trackVerts, velocityData, scaleFactorVelocity)
 
 	// Create ViewModels
 
@@ -30,6 +34,10 @@ func createScene() Scene {
 
 	centrifugalVectorLines := createLines(centrifugalVectors)
 	layer1.objects = append(layer1.objects, &centrifugalVectorLines)
+
+	velocityVectorLines := createLines(veloctiyVectors)
+	velocityVectorLines.Color = [3]uint8{255, 0, 0}
+	layer1.objects = append(layer1.objects, &velocityVectorLines)
 
 	trackPoints := createPoints(trackVerts)
 	layer1.objects = append(layer1.objects, &trackPoints)
@@ -51,7 +59,7 @@ func createScene() Scene {
 	idealLine.Color = [3]uint8{64, 255, 64}
 	layer2.objects = append(layer2.objects, &idealLine)
 
-	centrifugalVectorsIL := calcCentrifugalVectors(idealLineVerts, velocityData, scaleFactor)
+	centrifugalVectorsIL := calcCentrifugalVectors(idealLineVerts, velocityData, scaleFactorCentrifugal)
 	centrifugalVectorLinesIL := createLines(centrifugalVectorsIL)
 	centrifugalVectorLinesIL.Color = [3]uint8{128, 255, 128}
 	layer2.objects = append(layer2.objects, &centrifugalVectorLinesIL)

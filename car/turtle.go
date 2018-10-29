@@ -121,7 +121,7 @@ func setAcceleration(t TurtleV, a float64) TurtleV {
 
 func drive(t TurtleV, s float64, vv []float64) (TurtleV, []float64) {
 
-	vn := t.a * s
+	vn := t.v + (t.a * s)
 	sn := t.s + s
 
 	// TODO: position, interpolation ??

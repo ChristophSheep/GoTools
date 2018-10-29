@@ -76,13 +76,48 @@ func createTrackArea(vertices []float64, width float64) []float64 {
 	return areaVertices
 }
 
+func calcVelocityVectors(vertices []float64, velocityData []float64, scaleFactor float64) []float64 {
+	result := []float64{}
+
+	count := len(vertices) / N
+
+	for n := 0; n < count; n++ {
+		x1, y1 := getXY(vertices, n-1)
+		xn, yn := getXY(vertices, n+0)
+
+		vx, vy := calcVec(x1, y1, xn, yn)
+		nx, ny := calcNormalVector(vx, vy)
+
+		velocity := 0.0 // unit factor
+		if n < len(velocityData) {
+			velocity = velocityData[n]
+			fmt.Printf("n: %d, velocity: %f \n", n, velocity)
+
+		}
+
+		scaleX := velocity * scaleFactor
+		scaleY := velocity * scaleFactor
+
+		vvx, vvy := scale(nx, ny, -scaleX, -scaleY)
+
+		result = append(result, xn)
+		result = append(result, yn)
+
+		result = append(result, xn+vvx)
+		result = append(result, yn+vvy)
+
+	}
+
+	return result
+}
+
 func calcCentrifugalVectors(vertices []float64, velocityData []float64, scaleFactor float64) []float64 {
 
 	result := []float64{}
 
-	//_, radi, vectors := calcMiddlePointAndRadiAndVectors(vertices)
+	_, radi, vectors := calcMiddlePointAndRadiAndVectors(vertices)
 
-	_, _, vectors := calcMiddlePointAndRadiAndVectors(vertices)
+	//_, _, vectors := calcMiddlePointAndRadiAndVectors(vertices)
 
 	count := len(vectors) / N
 
@@ -105,21 +140,17 @@ func calcCentrifugalVectors(vertices []float64, velocityData []float64, scaleFac
 		//
 		// TODO: Fg = m * v^2 * k
 		//
-		/*
-			radius := radi[n] // radius = inf(1) -> k = 0
-				k := 1.0 / radius
 
-				m := 1.0
+		radius := radi[n] // radius = inf(1) -> k = 0
+		k := 1.0 / radius
 
-					// TODO: ONLY SHOW SPEED
-					Fg := m * velocity * velocity * k
+		m := 1.0
 
-					scaleX := Fg * scaleFactor
-					scaleY := Fg * scaleFactor
-		*/
+		// TODO: ONLY SHOW SPEED
+		Fg := m * velocity * velocity * k
 
-		scaleX := velocity * scaleFactor
-		scaleY := velocity * scaleFactor
+		scaleX := Fg * scaleFactor
+		scaleY := Fg * scaleFactor
 
 		vx, vy = normalize(vx, vy)
 		vx, vy = scale(vx, vy, scaleX, scaleY)
