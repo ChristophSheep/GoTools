@@ -6,7 +6,6 @@ It is a model of the virtual world.
 */
 
 import (
-	"fmt"
 	"math"
 )
 
@@ -89,10 +88,10 @@ func calcVelocityVectors(vertices []float64, velocityData []float64, scaleFactor
 		nx, ny := calcNormalVector(vx, vy)
 
 		velocity := 0.0 // unit factor
+
 		if n < len(velocityData) {
 			velocity = velocityData[n]
-			fmt.Printf("n: %d, velocity: %f \n", n, velocity)
-
+			//fmt.Printf("n: %d, velocity: %f \n", n, velocity)
 		}
 
 		scaleX := velocity * scaleFactor
@@ -126,7 +125,7 @@ func calcCentrifugalVectors(vertices []float64, velocityData []float64, scaleFac
 		velocity := 0.0 // unit factor
 		if n < len(velocityData) {
 			velocity = velocityData[n]
-			fmt.Printf("n: %d, velocity: %f \n", n, velocity)
+			//fmt.Printf("n: %d, velocity: %f \n", n, velocity)
 
 		}
 
@@ -329,7 +328,7 @@ func createAnyTrack() ([]float64, []float64) {
 	s0 := 0.0   // meter
 	v0 := 250.0 // km/h
 	a := 5.0    // acceleration km/h per meter
-	b := 10.0   // break km/h per meter
+	b := 50.0   // break km/h per meter
 	tv = setAbsolute(tv, s0, a, v0)
 
 	x := -20.0 // Start point
@@ -340,11 +339,24 @@ func createAnyTrack() ([]float64, []float64) {
 	k := 4.0 // k .. krümmung alpha 2 Grad after s 1m
 
 	tv, vv = _speedUp_(6, s, a, vv, tv)
+	tv, vv = _breakDown_(3, s, b, vv, tv)
+	tv, vv = _speedUp_(40, s, 0.0, vv, tv)
+	tv, vv = _speedUp_(62, s, 0.0, vv, tv)
+	tv, vv = _speedUp_(38, s, a, vv, tv)
+	tv, vv = _breakDown_(3, s, b, vv, tv)
+	tv, vv = _speedUp_(27, s, 0.0, vv, tv)
+	tv, vv = _speedUp_(35, s, a, vv, tv)
+	tv, vv = _breakDown_(3, s, b+10.0, vv, tv)
+	tv, vv = _speedUp_(15, s, 0.0, vv, tv)
+	tv, vv = _speedUp_(34, s, a, vv, tv)
+	tv, vv = _breakDown_(3, s, b+15.0, vv, tv)
+	tv, vv = _speedUp_(23, s, 0.0, vv, tv)
+	tv, vv = _speedUp_(14, s, a, vv, tv)
+	tv, vv = _breakDown_(3, s, b-5.0, vv, tv)
+	tv, vv = _speedUp_(10, s, 0.0, vv, tv)
+	tv, vv = _speedUp_(7, s, a*2, vv, tv)
 
 	t, vs = line(5, s, vs, t)
-
-	tv, vv = _breakDown_(10, s, b, vv, tv)
-
 	t, vs = clothoide(15, s, RIGHT, IN, k, vs, t)
 	t, vs = arc(25, s, RIGHT, k, vs, t)
 	t, vs = clothoide(5, s, RIGHT, OUT, k, vs, t)

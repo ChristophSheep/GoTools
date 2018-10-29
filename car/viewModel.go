@@ -105,7 +105,7 @@ func createLineLoops(vertices []float64) LineLoops {
 
 func createPoints(vertices []float64) Points {
 	return Points{
-		Color:    [3]uint8{255, 0, 0},
+		Color:    [3]uint8{128, 128, 210},
 		Width:    2.0,
 		Vertices: vertices}
 }

@@ -58,12 +58,12 @@ func createScene() Scene {
 	idealLine := createLineStripe(idealLineVerts)
 	idealLine.Color = [3]uint8{64, 255, 64}
 	layer2.objects = append(layer2.objects, &idealLine)
-
-	centrifugalVectorsIL := calcCentrifugalVectors(idealLineVerts, velocityData, scaleFactorCentrifugal)
-	centrifugalVectorLinesIL := createLines(centrifugalVectorsIL)
-	centrifugalVectorLinesIL.Color = [3]uint8{128, 255, 128}
-	layer2.objects = append(layer2.objects, &centrifugalVectorLinesIL)
-
+	/*
+		centrifugalVectorsIL := calcCentrifugalVectors(idealLineVerts, velocityData, scaleFactorCentrifugal)
+		centrifugalVectorLinesIL := createLines(centrifugalVectorsIL)
+		centrifugalVectorLinesIL.Color = [3]uint8{128, 255, 128}
+		layer2.objects = append(layer2.objects, &centrifugalVectorLinesIL)
+	*/
 	// Camera
 	camera := Camera{}
 	camera.scale = 0.02
