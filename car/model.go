@@ -417,8 +417,8 @@ func createAnyTrackIdealLine() []float64 {
 	t, vs = clothoide(5, s, LEFT, OUT, k+1.7, vs, t)
 	t, vs = line(6, s, vs, t)
 	t, vs = clothoide(5, s, RIGHT, IN, k+2.5, vs, t)
-	t, vs = arc(12, s, RIGHT, k+2.5, vs, t)
-	t, vs = clothoide(5, s, RIGHT, OUT, k+2.5, vs, t)
+	t, vs = arc(13, s, RIGHT, k+2.5, vs, t)
+	t, vs = clothoide(4, s, RIGHT, OUT, k+2.5, vs, t)
 	t, vs = line(5, s, vs, t)
 
 	return vs
